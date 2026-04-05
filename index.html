@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>內外科護理學 - 考古題特訓</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📖</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#f8f6f3;font-family:'Noto Sans TC',sans-serif}
+
+.hero{position:relative;background:linear-gradient(135deg,#0d3320,#1a5632 40%,#2e7d4f);padding:48px 24px 36px;text-align:center;overflow:hidden}
+.hero-bg{position:absolute;inset:0;opacity:.05;background-image:repeating-linear-gradient(45deg,#fff 0,#fff 1px,transparent 1px,transparent 18px)}
+.hero-title{position:relative;font-size:30px;font-weight:900;color:#fff;letter-spacing:5px;text-shadow:0 2px 12px rgba(0,0,0,.3)}
+.hero-sub{position:relative;color:#a8d5b8;font-size:14px;margin-top:6px;letter-spacing:3px}
+.hero-count{position:relative;color:#6db88a;font-size:12px;margin-top:8px;letter-spacing:1px}
+.stats-row{display:flex;gap:8px;padding:14px 16px 0;justify-content:center;flex-wrap:wrap}
+.stat{display:flex;flex-direction:column;align-items:center;background:#fff;border-radius:12px;padding:10px 16px;min-width:72px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.stat b{font-size:20px;color:#1a5632}.stat span{font-size:11px;color:#999;margin-top:2px}
+.stat.hl{background:#e8f5e9;border:1.5px solid #a5d6a7}
+.filter-label{font-size:12px;font-weight:700;color:#888;display:block;margin-bottom:6px}
+.filter-select{width:100%;padding:10px 14px;border:1.5px solid #d5cfc5;border-radius:12px;font-size:14px;font-family:inherit;background:#fff;color:#333;appearance:auto}
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px}
+.mode-card{display:flex;flex-direction:column;align-items:center;gap:6px;padding:24px 12px 20px;border-radius:18px;border:none;cursor:pointer;transition:transform .15s,box-shadow .15s;animation:fadeUp .4s ease both;text-align:center}
+.mode-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.1)}
+.mode-card:active{transform:scale(.96)}
+.mode-title{font-size:17px;font-weight:800}.mode-desc{font-size:12px;color:#888}
+.hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #e8e0d8;background:#fff;position:sticky;top:0;z-index:10}
+.hdr-t{font-weight:800;font-size:16px}
+.back-btn{background:none;border:none;font-size:14px;font-weight:700;color:#1a5632;cursor:pointer;padding:4px 8px;font-family:inherit}
+.bar-outer{height:4px;background:#e8e0d8;width:100%}.bar-inner{height:100%;border-radius:2px;transition:width .3s}
+.card{margin:14px 14px 0;background:#fff;border-radius:18px;padding:20px;box-shadow:0 2px 14px rgba(0,0,0,.06)}
+.card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.cat{font-size:11px;font-weight:700;background:#eee8e0;color:#7a6e60;padding:3px 10px;border-radius:20px;letter-spacing:1px}
+.exam-tag{font-size:10px;font-weight:600;background:#e3f2fd;color:#1565c0;padding:2px 8px;border-radius:12px}
+.star-btn{background:none;border:none;font-size:26px;cursor:pointer;color:#ccc;transition:transform .2s}.star-btn.on{color:#f5a623}.star-btn:hover{transform:scale(1.2)}
+.q-num{font-weight:900;color:#1a5632;margin-right:4px}
+.q-text{font-size:15px;line-height:1.75;margin-bottom:16px;font-weight:500}
+.opts{display:flex;flex-direction:column;gap:9px}
+.opt{display:flex;align-items:center;gap:12px;padding:13px 15px;border-radius:13px;border:1.5px solid #e0dcd6;background:#f7f5f2;cursor:pointer;font-size:14px;text-align:left;transition:all .15s;position:relative;width:100%;line-height:1.5;font-family:inherit;color:#333}
+.opt:hover:not(:disabled){transform:translateX(4px);box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.opt.correct{background:#d4edda;border-color:#1a5632;color:#14452f}
+.opt.wrong{background:#fce4ec;border-color:#c62828;color:#8b0000}
+.opt.picked{background:#fff3e0;border-color:#b45309}
+.opt-label{font-weight:800;font-size:14px;min-width:22px;text-align:center;flex-shrink:0}.opt-text{flex:1}
+.mark{position:absolute;right:14px;font-size:18px;font-weight:700}.ok-mark{color:#1a5632}.no-mark{color:#c62828}
+.explain{margin-top:16px;padding:16px;background:linear-gradient(135deg,#f5f3f0,#ede8e0);border-radius:14px;border-left:4px solid #1a5632}
+.explain-status{margin-bottom:8px;font-size:15px}.status-ok{color:#1a5632;font-weight:700}.status-no{color:#c62828;font-weight:700}
+.explain-text{font-size:13.5px;line-height:1.85;color:#444}
+.ref-row{display:flex;align-items:center;gap:6px;margin-top:12px;padding-top:10px;border-top:1px solid #ddd}
+.ref-link{font-size:13px;color:#1a5632;font-weight:700;text-decoration:none}.ref-link:hover{text-decoration:underline}
+.nav-row{display:flex;align-items:center;justify-content:space-between;padding:14px 16px}
+.nav-btn{background:#1a5632;color:#fff;border:none;border-radius:11px;padding:10px 18px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .15s}
+.nav-btn:disabled{opacity:.3;cursor:default}.nav-ct{font-size:14px;color:#999;font-weight:600}
+.exam-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#fff;border-bottom:1px solid #e8e0d8;position:sticky;top:0;z-index:10}
+.timer{font-size:24px;font-weight:900;color:#b45309;font-variant-numeric:tabular-nums}.timer.warn{color:#c62828;animation:pulse .8s infinite}
+.submit-btn{background:#b45309;color:#fff;border:none;border-radius:11px;padding:9px 18px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+.setup-card,.result-card{margin:16px;padding:32px 24px;background:#fff;border-radius:18px;text-align:center;box-shadow:0 2px 16px rgba(0,0,0,.06)}
+.setup-label{font-size:16px;font-weight:700;margin-bottom:16px;color:#555}.time-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.time-btn{width:54px;height:54px;border-radius:14px;border:2px solid #e0dcd6;background:#f7f5f2;font-size:18px;font-weight:700;cursor:pointer;color:#555;font-family:inherit;transition:all .15s}
+.time-btn.active{background:#fff3e0;border-color:#b45309;color:#b45309}.setup-info{color:#aaa;margin-top:16px;font-size:14px}
+.big-btn{background:linear-gradient(135deg,#1a5632,#2e7d4f);color:#fff;border:none;border-radius:14px;padding:14px 40px;font-size:16px;font-weight:800;cursor:pointer;letter-spacing:2px;font-family:inherit;transition:transform .15s;margin-top:12px}
+.big-btn:hover{transform:scale(1.03)}.big-btn:active{transform:scale(.97)}
+.score-big{font-size:68px;font-weight:900;color:#1a5632;line-height:1}.score-big span{font-size:32px}
+.score-sub{font-size:16px;color:#888;margin-top:4px}
+.dot-grid{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-top:18px}
+.dot{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff}
+.dot.ok{background:#1a5632}.dot.no{background:#c62828}
+.jump-row{display:flex;flex-wrap:wrap;gap:5px;padding:4px 16px 0;justify-content:center}
+.jump{width:34px;height:34px;border-radius:9px;border:none;font-size:12px;font-weight:600;cursor:pointer;background:#ede8e0;color:#777;font-family:inherit;transition:all .12s}
+.jump.done{background:#b45309;color:#fff}.jump.cur{outline:2.5px solid #b45309;outline-offset:1px}
+.empty-card{margin:16px;padding:48px 24px;background:#fff;border-radius:18px;text-align:center;box-shadow:0 2px 16px rgba(0,0,0,.06)}
+.empty-t{font-size:18px;font-weight:700;color:#555;margin-top:12px}
+.reset-btn{background:none;border:1.5px solid #d32f2f;color:#d32f2f;border-radius:12px;padding:10px 24px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;margin-top:8px}
+.reset-btn:hover{background:#fce4ec}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;display:flex;align-items:center;justify-content:center;animation:fadeIn .2s}
+.modal-box{background:#fff;border-radius:20px;padding:32px 28px;max-width:340px;width:90%;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.2);animation:fadeUp .25s ease}
+.modal-title{font-size:18px;font-weight:800;color:#333;margin-bottom:8px}
+.modal-msg{font-size:14px;color:#777;line-height:1.6;margin-bottom:20px}
+.modal-btns{display:flex;gap:10px;justify-content:center}
+.modal-cancel{background:#f0ece6;border:none;border-radius:12px;padding:10px 24px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;color:#666}
+.modal-confirm{background:#d32f2f;border:none;border-radius:12px;padding:10px 24px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;color:#fff}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.fadeUp{animation:fadeUp .3s ease}.fadeIn{animation:fadeIn .3s ease}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script>
+
+const EXAMS = [
+  {id:"115-1",name:"115年第一次"},
+  {id:"114-3",name:"114年第三次"},
+  {id:"114-2",name:"114年第二次"},
+  {id:"114-1",name:"114年第一次"},
+  {id:"113-3",name:"113年第三次"},
+  {id:"113-2",name:"113年第二次"},
+  {id:"113-1",name:"113年第一次"},
+];
+
+const QUESTIONS = [
+{id:"115-1-1",examId:"115-1",num:1,category:"神經",question:"陳先生T3～T5脊髓損傷，目前血壓250/140 mmHg，心跳50～55次／分，有大量出汗情形，主訴頭部嚴重疼痛、看東西模糊，超過6小時以上未解尿，可能發生何種現象？",options:["神經性休克", "自主神經過度反射", "脊髓自動症", "脊髓休克"],answer:1,explanation:"T6以上脊髓損傷因膀胱膨脹等刺激引起交感神經過度興奮，出現嚴重高血壓、心搏徐緩、頭痛、大量出汗，為自主神經過度反射。",reference:"脊髓損傷 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%84%8A%E9%AB%93%E6%90%8D%E5%82%B7"},
+{id:"115-1-2",examId:"115-1",num:2,category:"神經",question:"有關重症肌無力之敘述，下列何者正確？①屬於自體免疫疾病 ②第一型僅侵犯眼肌 ③四肢無力發生在遠端和下肢且不對稱 ④侵犯肋間肌致呼吸困難致死",options:["①②③", "①②④", "①③④", "②③④"],answer:1,explanation:"①②④正確。四肢無力通常是對稱且近端為主(③錯)。",reference:"重症肌無力 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%87%8D%E7%97%87%E8%82%8C%E7%84%A1%E5%8A%9B"},
+{id:"115-1-3",examId:"115-1",num:3,category:"神經",question:"有關腦膜炎病人接受腰椎穿刺檢查，下列何者錯誤？",options:["懷疑顱內壓升高時不宜執行", "穿刺針由L3-L4椎間垂直穿入", "腦脊髓液會出現總蛋白質減少及葡萄糖增加", "正常壓力為70～180 mmH2O"],answer:2,explanation:"腦膜炎時蛋白質「增加」、葡萄糖「減少」，C敘述相反。",reference:"腦膜炎 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%84%91%E8%86%9C%E7%82%8E"},
+{id:"115-1-4",examId:"115-1",num:4,category:"神經",question:"有關不同類型腦中風發作之比較，下列何者錯誤？",options:["暫時性缺血發作是血栓型警訊", "栓塞型症狀突然發生", "出血性有劇烈頭痛前驅症狀", "缺血性通常發作於活動時"],answer:3,explanation:"缺血性腦中風通常發作於休息或睡眠時，出血性才常於活動時。",reference:"中風 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E4%B8%AD%E9%A2%A8"},
+{id:"115-1-5",examId:"115-1",num:5,category:"神經",question:"病人跌倒造成腦部枕葉受損時出現的症狀？",options:["無法控制情緒", "無法辨識本體感受", "無法解析所看見的東西", "近遠期記憶受損"],answer:2,explanation:"枕葉主管視覺中樞，受損時無法解析所見事物(視覺失認)。",reference:"大腦皮質 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%A4%A7%E8%84%91%E7%9A%AE%E8%B4%A8"},
+{id:"115-1-6",examId:"115-1",num:6,category:"消化",question:"有關急性胰臟炎的敘述，下列何者正確？",options:["因膽道疾病導致膽汁與胰液逆流而引起", "Murphy's sign是常見表徵", "康復期應採高脂飲食", "血清中鈣濃度通常會升高"],answer:0,explanation:"最常見原因為膽道疾病及酗酒。Murphy's sign為膽囊炎。康復期低脂。血鈣下降。",reference:"胰臟炎 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%83%B0%E8%87%9F%E7%82%8E"},
+{id:"115-1-7",examId:"115-1",num:7,category:"消化",question:"有關口服膽囊攝影檢查的敘述，下列何者正確？",options:["檢查前需採低脂飲食", "急性膽囊炎為適應症", "檢查前30分鐘服顯影劑", "排尿燒灼感代表UTI"],answer:0,explanation:"檢查前低脂飲食以利膽囊充盈顯影。急性膽囊炎為禁忌症。",reference:"膽囊炎 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%86%BD%E5%9B%8A%E7%82%8E"},
+{id:"115-1-8",examId:"115-1",num:8,category:"消化",question:"有關口腔癌的敘述，下列何者正確？",options:["以上顎黏膜最多", "以鱗狀上皮細胞癌最常見", "咀嚼不順為早期徵象", "無痛潰瘍為晚期徵象"],answer:1,explanation:"口腔癌以鱗狀上皮細胞癌最常見(約90%)。好發部位以舌頭最多。",reference:"口腔癌 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%8F%A3%E8%85%94%E7%99%8C"},
+{id:"115-1-9",examId:"115-1",num:9,category:"消化",question:"肝性腦病變可能出現的臨床表徵，下列何者錯誤？",options:["深腱反射消失", "肌肉僵直抽搐", "Babinski's sign陽性", "非昏迷期出現撲翼樣震顫"],answer:0,explanation:"肝性腦病變深腱反射「亢進」而非消失。",reference:"肝硬化 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%82%9D%E7%A1%AC%E5%8C%96"},
+{id:"115-1-10",examId:"115-1",num:10,category:"消化",question:"闌尾炎破裂懷疑腹膜炎之臨床表徵？①腹部僵硬 ②反彈痛 ③腸蠕動音增加 ④腹部叩診實音",options:["①②", "①④", "②③", "③④"],answer:0,explanation:"腹膜炎典型為板狀腹及反彈痛。腸蠕動音減少或消失。",reference:"闌尾炎 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%98%91%E5%B0%BE%E7%82%8E"},
+{id:"115-1-11",examId:"115-1",num:11,category:"骨骼",question:"左側股骨骨折接受石膏制動，下列何者錯誤？",options:["上石膏前用襪套棉墊包覆", "石膏乾燥時不覆蓋衣物", "出現6P可能腔隙症候群", "皮膚瘀斑表示低血容性休克"],answer:3,explanation:"皮膚瘀斑為脂肪栓塞徵象，非低血容性休克。",reference:"骨折 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%AA%A8%E6%8A%98"},
+{id:"115-1-12",examId:"115-1",num:12,category:"骨骼",question:"有關不同關節炎之比較，下列何者正確？",options:["類風濕性關節炎與老化有關", "退化性關節炎是嘌呤代謝異常", "痛風好發於男性四肢遠端關節", "退化性好發55歲以上女性周邊小關節"],answer:2,explanation:"痛風好發男性，常侵犯四肢遠端關節(尤第一蹠趾關節)。",reference:"關節炎 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%97%9C%E7%AF%80%E7%82%8E"},
+{id:"115-1-13",examId:"115-1",num:13,category:"感覺",question:"有關急性中耳炎醫療處置，下列何者錯誤？",options:["抗生素使用持續3～5天", "疼痛發燒可用解熱鎮痛劑", "鼓膜腫脹可行鼓膜切開術", "使用減輕鼻充血藥物"],answer:0,explanation:"抗生素需持續7-10天，非3-5天。",reference:"中耳炎 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E4%B8%AD%E8%80%B3%E7%82%8E"},
+{id:"115-1-14",examId:"115-1",num:14,category:"呼吸",question:"下列何種病毒與鼻咽癌有關？",options:["EB病毒", "COVID-19病毒", "A型流感病毒", "B型流感病毒"],answer:0,explanation:"EB病毒與鼻咽癌密切相關。",reference:"鼻咽癌 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%BC%BB%E5%92%BD%E7%99%8C"},
+{id:"115-1-15",examId:"115-1",num:15,category:"感覺",question:"有關青光眼用藥Timolol護理指導，下列何者錯誤？",options:["是一種縮瞳劑", "可減少房水量", "氣喘病人禁用", "需評估心搏徐緩"],answer:0,explanation:"Timolol是β-阻斷劑，非縮瞳劑。",reference:"青光眼 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%9D%92%E5%85%89%E7%9C%BC"},
+{id:"115-1-16",examId:"115-1",num:16,category:"心血管",question:"有關心包膜炎照護，下列何者不適宜？",options:["鼓勵平躺及深呼吸減緩胸痛", "發燒時臥床休息", "退燒藥可用Aspirin", "提供高蛋白高醣飲食"],answer:0,explanation:"應採坐姿前傾減緩胸痛，非平躺。",reference:"心包膜炎 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%BF%83%E5%8C%85%E8%86%9C%E7%82%8E"},
+{id:"115-1-17",examId:"115-1",num:17,category:"心血管",question:"有關血栓性靜脈炎評估與照護，下列何者錯誤？",options:["足背屈曲時腓腸肌疼痛", "Coumadin可預防治療靜脈血栓", "應定期按摩患肢促進循環", "抬高患肢減輕炎症疼痛"],answer:2,explanation:"禁止按摩患肢，可能導致血栓脫落致肺栓塞。",reference:"深靜脈血栓 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%B7%B1%E9%9D%9C%E8%84%88%E8%A1%80%E6%A0%93"},
+{id:"115-1-18",examId:"115-1",num:18,category:"心血管",question:"鬱滯性潰瘍肢體評估？①足踝內側 ②色素沉著 ③凹陷性水腫 ④趾甲變厚 ⑤腳趾潰瘍",options:["①②③", "①④⑤", "②③⑤", "③④⑤"],answer:0,explanation:"①②③為靜脈性特徵。④⑤為動脈性特徵。",reference:"深靜脈血栓 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%B7%B1%E9%9D%9C%E8%84%88%E8%A1%80%E6%A0%93"},
+{id:"115-1-19",examId:"115-1",num:19,category:"心血管",question:"心因性休克護理重點，下列何者錯誤？",options:["使用促進心臟幫浦藥物", "使用溫熱療法提高周邊循環", "必要時放置IABP", "給予氧氣"],answer:1,explanation:"溫熱療法使血管擴張，反降低回心血量加重休克。",reference:"心因性休克 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E4%BC%91%E5%85%8B"},
+{id:"115-1-20",examId:"115-1",num:20,category:"心血管",question:"下列何者為右心衰竭的臨床表徵？",options:["呼吸困難", "粉紅色泡沫痰", "下肢水腫", "少尿或無尿"],answer:2,explanation:"右心衰竭致體循環鬱血：下肢水腫、頸靜脈怒張、肝脾腫大。",reference:"心臟衰竭 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%BF%83%E8%87%9F%E8%A1%B0%E7%AB%AD"},
+{id:"115-1-21",examId:"115-1",num:21,category:"腫瘤",question:"惡性腫瘤細胞特性？①缺乏接觸抑制 ②快速增殖 ③未分化 ④需要時增殖 ⑤黏著性低活動力高",options:["①②③", "①③④", "①③⑤", "②④⑤"],answer:2,explanation:"惡性腫瘤：缺乏接觸抑制①、未分化③、黏著性低易轉移⑤。",reference:"癌症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%99%8C%E7%97%87"},
+{id:"115-1-22",examId:"115-1",num:22,category:"血液",question:"多發性骨髓瘤確定診斷的主要標準？",options:["骨髓內漿細胞40%", "血清IgG為2 gm/dL", "X光骨頭侵蝕", "IgA＜0.1 gm/dL"],answer:0,explanation:"骨髓內漿細胞≥30%為主要診斷標準。",reference:"多發性骨髓瘤 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%A4%9A%E7%99%BC%E6%80%A7%E9%AA%A8%E9%AB%93%E7%98%A4"},
+{id:"115-1-23",examId:"115-1",num:23,category:"血液",question:"多發性骨髓瘤病人便秘、意識不清、心律不整？",options:["高血磷", "高血鈣", "高血鉀", "高尿酸"],answer:1,explanation:"骨質破壞釋放鈣，高血鈣引起便秘、意識改變、心律不整。",reference:"多發性骨髓瘤 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%A4%9A%E7%99%BC%E6%80%A7%E9%AA%A8%E9%AB%93%E7%98%A4"},
+{id:"115-1-24",examId:"115-1",num:24,category:"血液",question:"多發性骨髓瘤高血鈣護理措施？",options:["多喝牛奶", "限制水份", "給Allopurinol", "給Zometa"],answer:3,explanation:"Zometa(雙磷酸鹽)抑制骨質再吸收，治療高血鈣。",reference:"多發性骨髓瘤 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%A4%9A%E7%99%BC%E6%80%A7%E9%AA%A8%E9%AB%93%E7%98%A4"},
+{id:"115-1-25",examId:"115-1",num:25,category:"腫瘤",question:"化療藥物外滲護理措施？",options:["停止輸注立即拔針", "放低注射部位", "彈繃加壓", "注射解毒劑於滲漏部位四周"],answer:3,explanation:"先不拔針嘗試回抽、抬高部位、不加壓、注射解毒劑。",reference:"癌症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%99%8C%E7%97%87"},
+{id:"115-1-26",examId:"115-1",num:26,category:"血液",question:"骨髓穿刺抽吸術，下列何者錯誤？",options:["穿刺部位選肋骨脊椎脛骨", "有助了解造血組織異常", "紗布加壓5分鐘以上", "注意出血或感染"],answer:0,explanation:"成人穿刺部位為後腸骨嵴或胸骨，非肋骨脊椎脛骨。",reference:"骨髓檢查 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%AA%A8%E9%AB%93%E6%AA%A2%E6%9F%A5"},
+{id:"115-1-27",examId:"115-1",num:27,category:"免疫",question:"過敏原檢查最合適？",options:["伍氏燈檢查", "免疫螢光試驗", "刮畫試驗", "皮膚切片"],answer:2,explanation:"刮畫試驗(scratch test)為鑑定特定過敏原最常用方法。",reference:"過敏 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%BF%87%E6%95%8F"},
+{id:"115-1-28",examId:"115-1",num:28,category:"皮膚",question:"仰臥時壓力性損傷較不常發生的部位？",options:["肩胛骨", "尾骶骨", "坐骨結節", "腳跟"],answer:2,explanation:"坐骨結節是坐姿時的壓力點，仰臥時不受壓。",reference:"褥瘡 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%A4%A5%E7%98%A1"},
+{id:"115-1-29",examId:"115-1",num:29,category:"消化",question:"疱疹性齒齦口腔炎，下列何者正確？",options:["由HSV-I感染", "Acyclovir症狀嚴重時才用", "水泡可擠壓", "待不痛再口腔護理"],answer:0,explanation:"由HSV-I感染。Acyclovir應及早使用。",reference:"單純疱疹 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%96%AE%E7%B4%94%E7%96%B1%E7%96%B9"},
+{id:"115-1-30",examId:"115-1",num:30,category:"免疫",question:"類風濕性關節炎藥物治療，下列何者正確？",options:["Aspirin改變疾病過程", "COX-2抑制劑適用胃潰瘍高危險病人", "DMARDs為第一線用藥", "奎寧類副作用在聽力損傷"],answer:1,explanation:"COX-2抑制劑較不影響腸胃道，適用於有潰瘍病史者。",reference:"關節炎 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%97%9C%E7%AF%80%E7%82%8E"},
+{id:"115-1-31",examId:"115-1",num:31,category:"免疫",question:"SLE臨床表徵，下列何者錯誤？",options:["關節發炎疼痛腫脹僵硬", "心包炎肋膜炎影響預後", "中樞神經不受侵犯", "腎功能下降應限制蛋白水分鹽分"],answer:2,explanation:"SLE會侵犯中樞神經系統，可出現癲癇、精神異常等。",reference:"全身性紅斑性狼瘡 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%B4%85%E6%96%91%E6%80%A7%E7%8B%BC%E7%98%A1"},
+{id:"115-1-32",examId:"115-1",num:32,category:"呼吸",question:"支氣管鏡檢查後護理，下列何者最適當？",options:["8小時內大量補充液體", "進食前確認作嘔反射恢復", "躺向健側利肺擴張", "靜注Atropine減少分泌物"],answer:1,explanation:"進食前須確認作嘔反射恢復以防誤嚥。",reference:"支氣管鏡 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%94%AF%E6%B0%A3%E7%AE%A1%E9%8F%A1"},
+{id:"115-1-33",examId:"115-1",num:33,category:"呼吸",question:"呼吸器壓力過高警報原因？",options:["管路積水", "管路鬆脫", "氣管氣囊漏氣", "氣胸"],answer:0,explanation:"管路積水或痰液阻塞使氣道阻力增加致壓力過高。",reference:"急性呼吸窘迫 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%80%A5%E6%80%A7%E5%91%BC%E5%90%B8%E7%AA%98%E8%BF%AB%E7%97%87%E5%80%99%E7%BE%A4"},
+{id:"115-1-34",examId:"115-1",num:34,category:"呼吸",question:"早期氧合不足的徵象？",options:["皮膚發紺", "躁動不安", "低血壓", "心搏過緩"],answer:1,explanation:"早期缺氧最先出現躁動不安、焦慮。",reference:"缺氧 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%BC%BA%E6%B0%A7"},
+{id:"115-1-35",examId:"115-1",num:35,category:"呼吸",question:"肺結核服用EMB，下列何者正確？",options:["注意視力模糊及紅綠色盲", "尿液呈橘紅色", "補充VitB6預防副作用", "須與制酸劑併用"],answer:0,explanation:"EMB副作用為視神經炎(視力模糊、色盲)。",reference:"結核病 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%BB%93%E6%A0%B8%E7%97%85"},
+{id:"115-1-36",examId:"115-1",num:36,category:"呼吸",question:"肺栓塞通氣灌流比失衡？",options:["隔膜增厚", "痰液阻礙通氣", "有血流但肺泡氣體不足", "通氣足夠但血流灌注受阻"],answer:3,explanation:"肺栓塞使血管阻塞，通氣正常但灌流減少。",reference:"肺栓塞 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%82%BA%E6%A0%93%E5%A1%9E"},
+{id:"115-1-37",examId:"115-1",num:37,category:"泌尿",question:"GFR 17的病人護理指導？",options:["攝取高鉀食物", "多攝取蛋白質", "皮膚乾燥可用calamine lotion", "每日補充3000mL水份"],answer:2,explanation:"CKD第4期應限鉀限蛋白限水。calamine lotion可緩解搔癢。",reference:"慢性腎臟病 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%85%A2%E6%80%A7%E8%85%8E%E8%87%9F%E7%97%85"},
+{id:"115-1-38",examId:"115-1",num:38,category:"泌尿",question:"感染性膀胱炎導因，何者最不適當？",options:["常見致病菌大腸桿菌", "男性尿道長易致膀胱細菌滋生", "膀胱炎常為上行性感染", "前列腺肥大影響排尿"],answer:1,explanation:"男性尿道長反而不易感染。女性尿道短才易感染。",reference:"泌尿道感染 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%B3%8C%E5%B0%BF%E9%81%93%E6%84%9F%E6%9F%93"},
+{id:"115-1-39",examId:"115-1",num:39,category:"泌尿",question:"泌尿道檢查，下列何者正確？",options:["尿流速檢查前禁食", "腎動脈攝影術後多喝水", "IVP檢查中採俯臥", "經皮腎切片採截石臥姿"],answer:1,explanation:"腎動脈攝影使用顯影劑，檢查後多喝水利排出。",reference:"泌尿系統 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%B3%8C%E5%B0%BF%E7%B3%BB%E7%B5%B1"},
+{id:"115-1-40",examId:"115-1",num:40,category:"泌尿",question:"預防血鉀過高飲食指導？",options:["避免熱量不足或長期饑餓", "多攝取雞精", "多使用低鈉鹽", "多吃水果乾"],answer:0,explanation:"饑餓致組織分解釋出鉀。雞精低鈉鹽水果乾含鉀高應避免。",reference:"高鉀血症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%AB%98%E9%89%80%E8%A1%80%E7%97%87"},
+{id:"115-1-41",examId:"115-1",num:41,category:"泌尿",question:"輸尿管鏡碎石術，下列何者錯誤？",options:["無傷口但術後放導尿管", "門診手術須全身麻醉", "術後鼓勵多喝水", "嚴重發燒血尿應速回診"],answer:1,explanation:"可半身麻醉，不一定需全身麻醉。",reference:"腎結石 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%85%8E%E7%B5%90%E7%9F%B3"},
+{id:"115-1-42",examId:"115-1",num:42,category:"內分泌",question:"副甲狀腺功能低下，下列何者正確？",options:["因高血鈣出現Chvostek's", "因低血磷致手指顫抖", "可能急性抽搐致呼吸道阻塞", "因酸中毒致抽搐惡化"],answer:2,explanation:"低血鈣可能急性抽搐、喉痙攣致呼吸道阻塞。",reference:"高鈣血症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%AB%98%E9%88%A3%E8%A1%80%E7%97%87"},
+{id:"115-1-43",examId:"115-1",num:43,category:"內分泌",question:"嗜鉻細胞瘤術後護理，下列何者錯誤？",options:["注意腎上腺功能不全", "監測尿量維持20-25cc/hr", "觀察出血及腸蠕動", "依醫囑給靜脈輸液"],answer:1,explanation:"正常每小時尿量應≥30cc/hr。",reference:"嗜鉻細胞瘤 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%97%9C%E9%89%BB%E7%B4%B0%E8%83%9E%E7%98%A4"},
+{id:"115-1-44",examId:"115-1",num:44,category:"內分泌",question:"腦下垂體前葉功能低下，下列何者錯誤？",options:["Sheehan's syndrome因腦下垂體切除", "以生長素缺乏最常見", "可能軟弱無力血糖偏低", "可能有黏液水腫"],answer:0,explanation:"Sheehan's syndrome是產後大出血致腦下垂體缺血壞死。",reference:"腦下垂體 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%85%A6%E4%B8%8B%E5%9E%82%E9%AB%94"},
+{id:"115-1-45",examId:"115-1",num:45,category:"內分泌",question:"糖尿病飲食比例不適宜？①碳水化合物50-60% ②脂肪5-10% ③飽和脂肪<7% ④蛋白質30-35%",options:["①②", "①③", "②④", "③④"],answer:2,explanation:"脂肪5-10%太低②、蛋白質30-35%太高④，均不適宜。",reference:"糖尿病 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%B3%96%E5%B0%BF%E7%97%85"},
+{id:"115-1-46",examId:"115-1",num:46,category:"內分泌",question:"Grave's disease表徵？①神經質 ②眼球突出 ③怕冷 ④手指顫抖 ⑤脛前凹陷性水腫",options:["①②④", "①③⑤", "②③⑤", "③④⑤"],answer:0,explanation:"甲亢：神經質①眼突②手抖④。怕熱非怕冷。脛前為非凹陷性水腫。",reference:"甲狀腺功能亢進 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%94%B2%E7%8A%B6%E8%85%BA%E5%8A%9F%E8%83%BD%E4%BA%A2%E8%BF%9B%E7%97%87"},
+{id:"115-1-47",examId:"115-1",num:47,category:"急重症",question:"過敏性休克？①過敏原來自藥物食物昆蟲 ②支氣管擴張 ③脈搏增快 ④注射epinephrine",options:["①②③", "①②④", "①③④", "②③④"],answer:2,explanation:"②錯：是支氣管「痙攣」非擴張。",reference:"過敏 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%BF%87%E6%95%8F"},
+{id:"115-1-48",examId:"115-1",num:48,category:"急重症",question:"有機磷中毒處置，下列何者錯誤？",options:["Apomorphine是有機磷拮抗劑", "胃灌洗維持呼吸道通暢", "可從皮膚吸收須穿隔離衣", "沾嘔吐物衣物應除去"],answer:0,explanation:"拮抗劑為Atropine和PAM，非Apomorphine。",reference:"有機磷中毒 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%9C%89%E6%A9%9F%E7%A3%B7%E4%B8%AD%E6%AF%92"},
+{id:"115-1-49",examId:"115-1",num:49,category:"急重症",question:"誤食強鹼溶液處置，下列何者錯誤？",options:["立即胃灌洗", "不可給中和劑", "疑似胃潰瘍應禁食", "注意口腔食道灼傷"],answer:0,explanation:"誤食強鹼禁止胃灌洗，會二次灼傷。",reference:"急診毒物學 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E4%B8%AD%E6%AF%92"},
+{id:"115-1-50",examId:"115-1",num:50,category:"傳染病",question:"H1N1流感，下列何者錯誤？",options:["病原菌屬於H型流感病毒", "大部分症狀輕微", "主要經飛沫接觸傳染", "治療藥物Tamiflu及Relenza"],answer:0,explanation:"H1N1為A型流感病毒亞型，非「H型」。",reference:"流行性感冒 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%B5%81%E8%A1%8C%E6%80%A7%E6%84%9F%E5%86%92"},
+{id:"114-3-1",examId:"114-3",num:1,category:"神經",question:"癲癇病人症狀及治療，何者最不適當？",options:["複雜性部分發作源自顳葉有先兆", "重積狀態指持續抽搐超過5分鐘", "強直-陣攣性發作在陣攣後期牙關緊閉雙腳伸直", "單一藥物治療逐漸增加劑量"],answer:2,explanation:"「強直期」出現牙關緊閉雙腳伸直，非陣攣後期。",reference:"大腦皮質 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%A4%A7%E8%84%91%E7%9A%AE%E8%B4%A8"},
+{id:"114-3-2",examId:"114-3",num:2,category:"神經",question:"62歲突然四肢癱瘓不能言語，可轉動眼球眨眼，哪部分受損？",options:["橋腦", "脊髓", "大腦廣泛傷害", "右側小腦"],answer:0,explanation:"閉鎖症候群因橋腦腹側受損。",reference:"大腦皮質 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%A4%A7%E8%84%91%E7%9A%AE%E8%B4%A8"},
+{id:"114-3-3",examId:"114-3",num:3,category:"神經",question:"阿茲海默症早期表徵？①興趣降低 ②無法簡單計算 ③學習能力降低 ④工作變差 ⑤夜間活動增加",options:["①②⑤", "①③④", "②③④", "③④⑤"],answer:1,explanation:"早期：①③④。②⑤為中期。",reference:"阿茲海默症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%98%BF%E5%85%B9%E6%B5%B7%E9%BB%98%E7%97%85"},
+{id:"114-3-4",examId:"114-3",num:4,category:"神經",question:"腦中風危險因子，何者錯誤？",options:["高血壓", "糖尿病", "高密度脂蛋白過高", "腦中風病史"],answer:2,explanation:"HDL為好膽固醇，過高是保護因子。",reference:"中風 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E4%B8%AD%E9%A2%A8"},
+{id:"114-3-5",examId:"114-3",num:5,category:"神經",question:"顱內壓升高非代償期初期徵象？",options:["呼吸脈搏慢血壓降", "呼吸快瞳孔大血壓升", "脈搏慢而有力血壓升", "呼吸不規則脈搏弱快血壓降"],answer:2,explanation:"庫欣氏反應：脈搏慢而有力、血壓上升。",reference:"顱內壓 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%A1%B1%E5%85%A7%E5%A3%93"},
+{id:"114-3-6",examId:"114-3",num:6,category:"消化",question:"小腸阻塞表徵？①劍突下強蠕動波 ②嘔吐糞便臭味 ③鈉鉀氯降低 ④早期腸蠕動音消失",options:["①②③", "①②④", "①③④", "②③④"],answer:0,explanation:"①②③正確。早期腸蠕動音增加④錯。",reference:"腸阻塞 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%85%B8%E6%A2%97%E5%A1%9E"},
+{id:"114-3-7",examId:"114-3",num:7,category:"消化",question:"胃食道逆流護理？①床頭抬高 ②穿緊身衣 ③進食後躺平 ④避免提重物彎腰",options:["①③", "①④", "②④", "③④"],answer:1,explanation:"①④正確。緊身衣增腹壓②錯。應直立③錯。",reference:"胃食道逆流 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%83%83%E9%A3%9F%E9%81%93%E9%80%86%E6%B5%81%E7%97%85"},
+{id:"114-3-8",examId:"114-3",num:8,category:"消化",question:"口腔癌頸部淋巴廓清術後，何者最不適當？",options:["固定肩膀不動", "每日評估傷口換藥", "先採清流質軟質飲食", "必要時氣管造口術"],answer:0,explanation:"應早期開始肩部運動復健。",reference:"口腔癌 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%8F%A3%E8%85%94%E7%99%8C"},
+{id:"114-3-9",examId:"114-3",num:9,category:"消化",question:"肝癌，何者最不適當？",options:["B肝為危險因子", "右上腹腫大壓痛", "好發歐美地區女性", "α-胎兒蛋白為指標"],answer:2,explanation:"好發亞洲非洲，男性多於女性。",reference:"肝硬化 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%82%9D%E7%A1%AC%E5%8C%96"},
+{id:"114-3-10",examId:"114-3",num:10,category:"消化",question:"膽囊癌，何者最不適當？",options:["手術及化療", "早期症狀不明顯", "腺癌好發年輕人", "可分浸潤型及黴菌型"],answer:2,explanation:"好發老年人，非年輕人。",reference:"膽囊炎 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%86%BD%E5%9B%8A%E7%82%8E"},
+{id:"114-3-11",examId:"114-3",num:11,category:"骨骼",question:"全髖關節置換術後，何者最不適當？",options:["高度相當有扶手椅子", "患肢保持外旋避免外展", "髖部屈曲不超過90度", "6週內不要性生活駕車"],answer:1,explanation:"應保持外「展」非避免外展。",reference:"髖關節置換術 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%AB%96%E9%97%9C%E7%AF%80%E7%BD%AE%E6%8F%9B%E8%A1%93"},
+{id:"114-3-12",examId:"114-3",num:12,category:"骨骼",question:"骨外固定器，何者最不適當？",options:["抗生素預防感染", "外科消毒法處理插針處", "指導等長運動", "避免下床以防鬆脫"],answer:3,explanation:"應鼓勵早期下床活動。",reference:"外固定器 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%A4%96%E5%9B%BA%E5%AE%9A%E5%99%A8"},
+{id:"114-3-13",examId:"114-3",num:13,category:"骨骼",question:"股骨骨折牽引護理？①重力垂直懸空 ②摩擦力小拉力大 ③罩單覆蓋牽引繩 ④隨時調整重量 ⑤牽引力與骨長軸平行",options:["①②③", "②③④", "①②⑤", "③④⑤"],answer:2,explanation:"①②⑤正確。不可覆蓋繩③。不可隨意調重量④。",reference:"骨折 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%AA%A8%E6%8A%98"},
+{id:"114-3-14",examId:"114-3",num:14,category:"感覺",question:"美尼爾氏症，何者最不適當？",options:["雙側感覺神經性聽力喪失", "利尿劑減輕水腫", "患耳在上臥床", "避免快速移動"],answer:0,explanation:"通常為「單側」非雙側。",reference:"美尼爾氏症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%A2%85%E5%B0%BC%E5%B0%94%E6%B0%8F%E7%97%85"},
+{id:"114-3-15",examId:"114-3",num:15,category:"呼吸",question:"扁桃腺炎，何者最不適當？",options:["鏈球菌感染最常見", "發燒喉嚨痛吞嚥痛", "急性發炎期切除最佳時機", "術後避免用力咳嗽"],answer:2,explanation:"急性期不宜手術，應等感染控制後。",reference:"扁桃腺炎 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%89%81%E6%A1%83%E9%AB%94%E7%82%8E"},
+{id:"114-3-16",examId:"114-3",num:16,category:"心血管",question:"38歲婦女Heparin治療DVT，何者最不適當？",options:["避免按摩腿部", "避免口服避孕藥", "避免深色蔬菜", "避免長期久坐"],answer:2,explanation:"Heparin不需限制VitK食物，那是Warfarin衛教。",reference:"深靜脈血栓 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%B7%B1%E9%9D%9C%E8%84%88%E8%A1%80%E6%A0%93"},
+{id:"114-3-17",examId:"114-3",num:17,category:"心血管",question:"58歲BMI 30血壓138/88，何者最不適當？",options:["控制熱量", "限制高鈉", "每天30分鐘運動", "積極使用藥物"],answer:3,explanation:"第一期高血壓應先生活調整，非積極用藥。",reference:"高血壓 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%AB%98%E8%A1%80%E5%A3%93"},
+{id:"114-3-18",examId:"114-3",num:18,category:"血液",question:"骨髓抽吸檢查？①了解造血組織 ②診斷白血病 ③由脛骨抽取 ④全身麻醉",options:["①②", "②③", "①④", "③④"],answer:0,explanation:"①②正確。成人後腸骨嵴非脛骨。局部麻醉。",reference:"骨髓檢查 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%AA%A8%E9%AB%93%E6%AA%A2%E6%9F%A5"},
+{id:"114-3-19",examId:"114-3",num:19,category:"腫瘤",question:"化療病人護理指導，何者最不適當？",options:["勿接觸感冒者", "勿食生菜生魚片", "發燒自行服退燒藥", "減少出入公共場所"],answer:2,explanation:"發燒不可自行服退燒藥，應立即就醫。",reference:"癌症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%99%8C%E7%97%87"},
+{id:"114-3-20",examId:"114-3",num:20,category:"血液",question:"輸血20mL後皮膚癢蕁麻疹哮喘？",options:["過敏反應", "熱原反應", "溶血反應", "細菌反應"],answer:0,explanation:"皮膚癢蕁麻疹哮喘為過敏反應。",reference:"過敏 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%BF%87%E6%95%8F"},
+{id:"114-3-21",examId:"114-3",num:21,category:"血液",question:"真性紅血球增多症併發症，何者最不適當？",options:["栓塞", "出血", "痛風", "感染"],answer:3,explanation:"感染非其常見併發症。",reference:"關節炎 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%97%9C%E7%AF%80%E7%82%8E"},
+{id:"114-3-22",examId:"114-3",num:22,category:"腫瘤",question:"TxN1M0 G4的意義，何者最不適當？",options:["無原發病灶", "無遠端轉移", "淋巴受侵犯", "細胞未分化"],answer:0,explanation:"Tx是無法「評估」原發腫瘤，非「無原發病灶」。",reference:"TNM分期 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/TNM%E5%88%86%E6%9C%9F%E7%B3%BB%E7%B5%B1"},
+{id:"114-3-23",examId:"114-3",num:23,category:"心血管",question:"排鉀利尿劑出現肌肉無力心悸，何者最不適當？",options:["多攝取香蕉柑橘", "盡量多下床活動", "監測心率心律", "評估電解質"],answer:1,explanation:"低血鉀時應避免大量活動。",reference:"高鉀血症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%AB%98%E9%89%80%E8%A1%80%E7%97%87"},
+{id:"114-3-24",examId:"114-3",num:24,category:"心血管",question:"IABP護理注意事項？",options:["患肢屈曲伸展交替", "收縮時氣球充氣降前負荷", "比較患肢健肢末梢循環", "避免給Heparin"],answer:2,explanation:"監測患肢末梢循環。患肢應伸直。舒張期充氣。需Heparin。",reference:"肝素 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%82%9D%E7%B4%A0"},
+{id:"114-3-25",examId:"114-3",num:25,category:"免疫",question:"急性排斥反應？",options:["移植後12-24小時", "T淋巴球巨噬細胞活性增加", "手術中恢復血循前", "無法治療須移除"],answer:1,explanation:"數週至數月發生，T淋巴球和巨噬細胞介導。可用免疫抑制劑。",reference:"器官移植 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%99%A8%E5%AE%98%E7%A7%BB%E6%A4%8D"},
+{id:"114-3-26",examId:"114-3",num:26,category:"皮膚",question:"帶狀疱疹？①痊癒後終生免疫 ②穿寬鬆衣服 ③可給止痛藥 ④未患水痘者應避免接觸",options:["①②③", "②③④", "①②④", "①③④"],answer:1,explanation:"①錯(可復發)。②③④正確。",reference:"單純疱疹 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%96%AE%E7%B4%94%E7%96%B1%E7%96%B9"},
+{id:"114-3-27",examId:"114-3",num:27,category:"皮膚",question:"燒傷面積：左上肢全+左下肢正面+軀幹正面？",options:["18%", "27%", "30%", "36%"],answer:3,explanation:"9+9+18=36%。",reference:"燒傷 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%87%92%E5%82%B7"},
+{id:"114-3-28",examId:"114-3",num:28,category:"皮膚",question:"傷口照護原則，何者最不適當？",options:["銅硒矽助傷口癒合", "隔離照護避感染", "清創術助癒合", "乾燥環境助上皮化"],answer:3,explanation:"應「濕潤性癒合」，非乾燥。",reference:"傷口癒合 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%82%B7%E5%8F%A3%E6%84%88%E5%90%88"},
+{id:"114-3-29",examId:"114-3",num:29,category:"免疫",question:"改善過敏的生活指導？",options:["使用地氈棉質窗簾", "避免除濕機", "避免濕拖把", "避免二手菸刺鼻清潔劑"],answer:3,explanation:"應避免刺激物如二手菸。",reference:"過敏 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%BF%87%E6%95%8F"},
+{id:"114-3-30",examId:"114-3",num:30,category:"傳染病",question:"AIDS危險因子，何者最不適當？",options:["不安全性行為", "注射藥癮者", "接受輸血", "共用餐具"],answer:3,explanation:"HIV不經共用餐具傳染。",reference:"輸血 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%BC%B8%E8%A1%80"},
+{id:"114-3-31",examId:"114-3",num:31,category:"呼吸",question:"急性支氣管炎？",options:["常見上呼吸道感染", "喉部氣管黏膜急性炎症", "病毒用Ampicillin", "衛教充分休息攝取水分"],answer:3,explanation:"屬下呼吸道感染。病毒不需抗生素。",reference:"急性支氣管炎 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%94%AF%E6%B0%A3%E7%AE%A1%E7%82%8E"},
+{id:"114-3-32",examId:"114-3",num:32,category:"呼吸",question:"右肺大葉性肺炎評估？①觸覺震顫增強 ②叩診過度反響音 ③喘鳴音 ④支氣管語音清楚",options:["①②", "③④", "①④", "②③"],answer:2,explanation:"肺實變：觸覺震顫增強①、支氣管語音清楚④。",reference:"肺炎 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%82%BA%E7%82%8E"},
+{id:"114-3-33",examId:"114-3",num:33,category:"呼吸",question:"急性呼吸衰竭評估，何者最適當？",options:["動脈血液氣體分析", "血流動力學監測", "胸部X光", "脈衝式血氧儀"],answer:0,explanation:"ABG最直接準確。",reference:"急性呼吸窘迫 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%80%A5%E6%80%A7%E5%91%BC%E5%90%B8%E7%AA%98%E8%BF%AB%E7%97%87%E5%80%99%E7%BE%A4"},
+{id:"114-3-34",examId:"114-3",num:34,category:"心血管",question:"心肌梗塞急性期處置？",options:["Heparin監測PT", "疼痛用Aspirin", "平躺降心臟負荷", "STEMI 12hr內給血栓溶解劑"],answer:3,explanation:"STEMI 12hr內可給血栓溶解劑。Heparin監測APTT。",reference:"中風 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E4%B8%AD%E9%A2%A8"},
+{id:"114-3-35",examId:"114-3",num:35,category:"呼吸",question:"肺心症呼吸道清除護理，何者最不適當？",options:["每日飲水至少2500cc", "胸部叩擊震顫", "深呼吸咳嗽", "支氣管擴張劑"],answer:0,explanation:"肺心症有右心衰竭傾向，過多水分加重負荷。",reference:"心臟衰竭 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%BF%83%E8%87%9F%E8%A1%B0%E7%AB%AD"},
+{id:"114-3-36",examId:"114-3",num:36,category:"心血管",question:"Warfarin護理指導，何者最不適當？",options:["監測PT", "避免VitK食物", "觀察出血點紫斑", "有助溶解血栓"],answer:3,explanation:"Warfarin預防新血栓，無法溶解已有血栓。",reference:"深靜脈血栓 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%B7%B1%E9%9D%9C%E8%84%88%E8%A1%80%E6%A0%93"},
+{id:"114-3-37",examId:"114-3",num:37,category:"急重症",question:"低血容性休克進行期，何者最不適當？",options:["代償失效皮膚濕冷", "可輸注0.9%NS", "造成呼吸性酸中毒", "BUN及Cr上升"],answer:2,explanation:"應為代謝性酸中毒非呼吸性。",reference:"動脈血氣分析 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%8B%95%E8%84%88%E8%A1%80%E6%B0%A3%E5%88%86%E6%9E%90"},
+{id:"114-3-38",examId:"114-3",num:38,category:"泌尿",question:"活體腎臟移植捐贈者，何者最不適當？",options:["兩側腎功能正常", "糖尿病15年HbA1c 8%", "20歲以上五親等", "動機純正自願"],answer:1,explanation:"糖尿病控制不佳者不適合捐腎。",reference:"慢性腎臟病 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%85%A2%E6%80%A7%E8%85%8E%E8%87%9F%E7%97%85"},
+{id:"114-3-39",examId:"114-3",num:39,category:"泌尿",question:"急性腎盂腎炎照護？①ESR升高 ②無尿貧血 ③酸灰性食物 ④每4hr排尿",options:["①④", "①③", "②③", "②④"],answer:1,explanation:"①③正確。症狀為發燒腰痛膿尿非②。每2-3hr排尿非④。",reference:"泌尿道感染 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%B3%8C%E5%B0%BF%E9%81%93%E6%84%9F%E6%9F%93"},
+{id:"114-3-40",examId:"114-3",num:40,category:"泌尿",question:"高血鈣照護？",options:["肌肉張力增加", "QT間隔延長", "低膳食纖維", "多攝取酸灰性食物"],answer:3,explanation:"酸灰性食物使尿酸化防鈣沉積。",reference:"高鈣血症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%AB%98%E9%88%A3%E8%A1%80%E7%97%87"},
+{id:"114-3-41",examId:"114-3",num:41,category:"內分泌",question:"中樞性尿崩症？",options:["尿比重1.050", "血漿滲透壓290", "多尿劇渴心搏過速", "體液容積過多"],answer:2,explanation:"多尿劇渴，脫水致心搏過速。",reference:"尿崩症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%B0%BF%E5%B4%A9%E7%97%87"},
+{id:"114-3-42",examId:"114-3",num:42,category:"內分泌",question:"副甲狀腺功能低下處置，何者最不適當？",options:["補充鈣鹽VitD", "觀察呼吸道通暢", "多攝取高磷食物", "飯前服氫氧化鋁"],answer:2,explanation:"應限磷非多攝取。",reference:"副甲狀腺 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%89%AF%E7%94%B2%E7%8B%80%E8%85%BA"},
+{id:"114-3-43",examId:"114-3",num:43,category:"內分泌",question:"原發性多醛固酮症表徵？",options:["低代謝率", "低血糖", "高血鈣", "低血鉀"],answer:3,explanation:"醛固酮過多致低血鉀。",reference:"高鈣血症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%AB%98%E9%88%A3%E8%A1%80%E7%97%87"},
+{id:"114-3-44",examId:"114-3",num:44,category:"內分泌",question:"何種激素與調血糖無關？",options:["抑制素", "腎上腺素", "皮質醇", "生長激素"],answer:0,explanation:"抑制素與直接調血糖無關。",reference:"糖尿病 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%B3%96%E5%B0%BF%E7%97%85"},
+{id:"114-3-45",examId:"114-3",num:45,category:"內分泌",question:"糖尿病血糖過高促因，何者最不適當？",options:["胰島素量少", "蜂窩性組織炎", "工作壓力增加", "食量減少運動增加"],answer:3,explanation:"食量減少運動增加會使血糖下降。",reference:"糖尿病 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%B3%96%E5%B0%BF%E7%97%85"},
+{id:"114-3-46",examId:"114-3",num:46,category:"急重症",question:"蛇咬傷，何者最適當？",options:["辨識蛇特徵去除束縛物", "割開傷口用嘴吸", "酒精消毒冰敷", "打死蛇帶到急診"],answer:0,explanation:"記住蛇特徵、去除戒指等。",reference:"蛇咬傷 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%9B%87%E5%92%AC%E5%82%B7"},
+{id:"114-3-47",examId:"114-3",num:47,category:"急重症",question:"有機磷農藥中毒，何者最適當？",options:["呈黑色有杏仁味", "靜注Atropine或PAM", "不可催吐洗胃", "初期瞳孔放大"],answer:1,explanation:"Atropine和PAM為主要治療。",reference:"有機磷中毒 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%9C%89%E6%A9%9F%E7%A3%B7%E4%B8%AD%E6%AF%92"},
+{id:"114-3-48",examId:"114-3",num:48,category:"傳染病",question:"COVID-19呼吸照護？",options:["避免鎮靜劑", "體液負平衡俯臥改善氧合", "噴霧治療", "T型管脫離訓練"],answer:1,explanation:"俯臥位通氣改善氧合、維持負平衡。",reference:"COVID-19 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/2019%E5%86%A0%E7%8A%B6%E7%97%85%E6%AF%92%E7%97%85"},
+{id:"114-3-49",examId:"114-3",num:49,category:"泌尿",question:"泌尿道感染？①尿培養菌落>10⁵ ②上泌尿道是尿道炎膀胱炎 ③大腸桿菌 ④症狀改善即停藥",options:["①②", "①③", "②④", "③④"],answer:1,explanation:"①③正確。上泌尿道指腎盂腎炎②錯。需完成療程④錯。",reference:"泌尿道感染 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%B3%8C%E5%B0%BF%E9%81%93%E6%84%9F%E6%9F%93"},
+{id:"114-3-50",examId:"114-3",num:50,category:"消化",question:"阻塞性黃疸評估？",options:["膽紅素入腸道糞便茶色", "ALP大於正常值", "PT正常", "與溶血有關"],answer:1,explanation:"ALP顯著升高。膽汁無法入腸道故糞便灰白色。",reference:"黃疸 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%BB%83%E7%96%B8"},
+{id:"114-2-1",examId:"114-2",num:1,category:"神經",question:"巴金森氏症主要典型症狀？①震顫 ②吞嚥困難 ③僵硬 ④運動遲緩 ⑤腹瀉",options:["①②③", "①③④", "①③⑤", "①②⑤"],answer:1,explanation:"典型三大症狀：震顫①、僵硬③、運動遲緩④。",reference:"巴金森氏症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%B8%95%E9%87%91%E6%A3%AE%E6%B0%8F%E7%97%87"},
+{id:"114-2-2",examId:"114-2",num:2,category:"神經",question:"顱內腫瘤ICP=18 mmHg照護？",options:["複視時鼓勵多下床", "高劑量類固醇應監測血糖", "腦組織灌流失效鼓勵液體", "腦疝是病情惡化早期徵象"],answer:1,explanation:"類固醇會升高血糖，需監測。ICP正常為5-15mmHg，18偏高。",reference:"糖尿病 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%B3%96%E5%B0%BF%E7%97%85"},
+{id:"114-2-3",examId:"114-2",num:3,category:"消化",question:"何者不是肝性腦病變誘發因子？",options:["感染", "便秘", "腸胃道出血", "高血鉀"],answer:3,explanation:"高血鉀不是肝性腦病變的主要誘發因子。常見誘因：感染、便秘、GI出血、高蛋白飲食。",reference:"肝硬化 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%82%9D%E7%A1%AC%E5%8C%96"},
+{id:"114-2-4",examId:"114-2",num:4,category:"神經",question:"癲癇藥物處置？",options:["多種藥物同時使用效果最佳", "停藥先選半衰期長的逐漸減量", "服用phenytoin懷孕須立即停藥", "2-3年無發作且檢查正常可考慮停藥"],answer:3,explanation:"2-3年無發作且神經學及腦波正常可考慮慢慢停藥。",reference:"癲癇 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%99%AB%E7%99%87"},
+{id:"114-2-5",examId:"114-2",num:5,category:"神經",question:"頸椎脊髓損傷脊髓休克期，何者錯誤？",options:["心跳50次血壓160/100", "因喪失自主神經控制", "運動感覺反射減弱或消失", "出現尿滯留腸蠕動下降"],answer:0,explanation:"脊髓休克期血壓會下降(非升高至160/100)，心跳可能慢但血壓應為低血壓。",reference:"脊髓損傷 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%84%8A%E9%AB%93%E6%90%8D%E5%82%B7"},
+{id:"114-2-6",examId:"114-2",num:6,category:"消化",question:"膽囊炎護理評估及照護？",options:["急性期右上腹痛可能輻射至右下腹", "術後監測腹脹僵硬嘔吐等腹膜感染", "用morphine緩解疼痛", "術後引流液墨綠色需立刻通知"],answer:1,explanation:"術後需監測腹膜感染徵象。morphine可能引起Oddi括約肌痙攣不宜使用。",reference:"膽囊炎 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%86%BD%E5%9B%8A%E7%82%8E"},
+{id:"114-2-7",examId:"114-2",num:7,category:"消化",question:"食道癌，何者錯誤？",options:["下端癌可採胃造口術", "食道重建適用中段", "光動力治療後避光1個月", "鼓勵低蛋白高醣高渣飲食"],answer:3,explanation:"食道癌應採高蛋白高熱量飲食，非低蛋白高渣。",reference:"食道癌 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%A3%9F%E9%81%93%E7%99%8C"},
+{id:"114-2-8",examId:"114-2",num:8,category:"消化",question:"上腸胃道出血照護，何者錯誤？",options:["監測嘔吐物大便顏色", "監測肢端冰冷指甲床蒼白", "出血停止後立刻停止血管加壓素", "評估腹部腹脹僵硬"],answer:2,explanation:"血管加壓素不可突然停止，需逐漸減量。",reference:"內外科護理學 - 考選部",refUrl:"https://wwwc.moex.gov.tw/"},
+{id:"114-2-9",examId:"114-2",num:9,category:"消化",question:"食道靜脈曲張出血護理指導，何者不適當？",options:["避免用力咳嗽提重物", "採軟質飲食", "注意食物溫度", "須服鎮靜劑減焦慮"],answer:3,explanation:"不應常規使用鎮靜劑，可能抑制肝功能及呼吸。",reference:"深靜脈血栓 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%B7%B1%E9%9D%9C%E8%84%88%E8%A1%80%E6%A0%93"},
+{id:"114-2-10",examId:"114-2",num:10,category:"消化",question:"疝氣手術後護理指導？①傷口熱敷 ②不需減重 ③陰囊支托 ④多吃蔬果防便秘 ⑤立即上班搬運",options:["①②", "②③", "③④", "④⑤"],answer:2,explanation:"③④正確。陰囊支托減輕水腫。多吃蔬果防便秘。應減重避免腹壓增加。",reference:"疝氣 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%96%9D%E6%B0%A3"},
+{id:"114-2-11",examId:"114-2",num:11,category:"骨骼",question:"骨質疏鬆危險因子？①停經前婦女 ②大量咖啡茶飲 ③規律運動 ④靜態生活長期臥床 ⑤日曬不足",options:["①②③", "①③④", "②④⑤", "③④⑤"],answer:2,explanation:"②④⑤為危險因子。停經前①和規律運動③為保護因子。",reference:"骨質疏鬆症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%AA%A8%E8%B3%AA%E7%96%8F%E9%AC%86%E7%97%87"},
+{id:"114-2-12",examId:"114-2",num:12,category:"骨骼",question:"全膝關節置換術後照護，何者最不適當？",options:["枕頭抬高患肢促循環", "術後1-2天可用CPM", "助行器手把與腰同高肘彎≦30度", "多上下樓梯走遠路促循環"],answer:3,explanation:"術後早期不宜多上下樓梯走遠路，會增加膝關節負擔。",reference:"膝關節置換術 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%86%9D%E9%97%9C%E7%AF%80%E7%BD%AE%E6%8F%9B%E8%A1%93"},
+{id:"114-2-13",examId:"114-2",num:13,category:"骨骼",question:"移除下肢石膏後護理，何者不適當？",options:["立即下床行走增加平衡感", "避免過度曝曬", "行走時用彈繃包紮", "皮膚黃棕色鱗片是正常"],answer:0,explanation:"移除石膏後不應立即下床行走，應漸進式增加活動。",reference:"骨折 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%AA%A8%E6%8A%98"},
+{id:"114-2-14",examId:"114-2",num:14,category:"感覺",question:"白內障最主要的病變構造？",options:["角膜", "水晶體", "鞏膜", "視神經"],answer:1,explanation:"白內障是水晶體混濁所致。",reference:"白內障 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%99%BD%E5%85%A7%E9%9A%9C"},
+{id:"114-2-15",examId:"114-2",num:15,category:"感覺",question:"韋伯試驗右耳較大聲，任內試驗右耳AC≦BC，右耳病變位置？①外耳 ②中耳 ③內耳 ④耳蝸神經",options:["①②", "①③", "②④", "③④"],answer:0,explanation:"韋伯右耳大聲+右耳BC≧AC表示右耳為傳導性聽力損失，病變在外耳①或中耳②。",reference:"聽力檢查 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%81%BD%E5%8A%9B%E6%AA%A2%E6%9F%A5"},
+{id:"114-2-16",examId:"114-2",num:16,category:"心血管",question:"左心衰竭臨床表徵？",options:["下肢水腫", "肝脾腫大", "中心靜脈壓上升", "端坐呼吸"],answer:3,explanation:"左心衰竭致肺循環鬱血：端坐呼吸、呼吸困難、肺水腫。其餘為右心衰竭表徵。",reference:"心臟衰竭 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%BF%83%E8%87%9F%E8%A1%B0%E7%AB%AD"},
+{id:"114-2-17",examId:"114-2",num:17,category:"心血管",question:"心臟復健？①依BMR選擇活動 ②依MET選擇活動 ③做有氧運動 ④做等長運動",options:["①③", "①④", "②③", "②④"],answer:2,explanation:"依MET選擇活動②、做有氧運動③正確。心臟復健避免等長運動(會增加後負荷)。",reference:"心臟復健 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%BF%83%E8%87%9F%E5%BE%A9%E5%81%A5"},
+{id:"114-2-18",examId:"114-2",num:18,category:"心血管",question:"預防靜脈血栓形成措施，何者不適當？",options:["術後早期下床", "多穿緊身衣", "抬高下肢促靜脈回流", "穿彈性襪"],answer:1,explanation:"「緊身衣」不同於彈性襪，普通緊身衣可能反而影響循環。應穿彈性襪。",reference:"內外科護理學 - 考選部",refUrl:"https://wwwc.moex.gov.tw/"},
+{id:"114-2-19",examId:"114-2",num:19,category:"心血管",question:"心律去顫整流術，何者錯誤？",options:["初次電量50-200焦耳", "電擊板胸骨右緣2肋間與左腋前線5肋間", "常用於心房纖維顫動", "電擊時切勿碰觸病人"],answer:2,explanation:"去顫(defibrillation)初次治療電量應為200焦耳(雙相波)或360焦耳(單相波)，C選項：去顫主要用於心室顫動/無脈搏心室頻脈，非心房纖維顫動。心房纖維顫動用的是cardioversion。",reference:"AED - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%87%AA%E5%8B%95%E9%AB%94%E5%A4%96%E5%BF%83%E8%87%9F%E9%99%A4%E9%A1%AB%E5%99%A8"},
+{id:"114-2-20",examId:"114-2",num:20,category:"心血管",question:"心衰竭代償徵象，何者不是？",options:["心跳變快", "心室腔擴張", "心肌需氧減少", "心肌肥厚"],answer:2,explanation:"心衰竭代償時心肌需氧量增加(非減少)。心跳加快、心室擴張、心肌肥厚均為代償機轉。",reference:"心臟衰竭 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%BF%83%E8%87%9F%E8%A1%B0%E7%AB%AD"},
+{id:"114-2-21",examId:"114-2",num:21,category:"腫瘤",question:"瀕死期癌症病人臨終關懷？",options:["評估面對死亡的調適能力", "減少開放性溝通", "持續灌注希望", "醫護採被動方式"],answer:0,explanation:"應評估病人面對死亡的調適能力，提供適當支持。",reference:"內外科護理學 - 考選部",refUrl:"https://wwwc.moex.gov.tw/"},
+{id:"114-2-22",examId:"114-2",num:22,category:"腫瘤",question:"sorafenib治療出現手掌腳掌脫皮龜裂刺痛，護理指導？①不用力搓洗穿寬鬆鞋 ②塗尿素乳膏凡士林穿襪就寢 ③外出防曬但不可擦防曬乳 ④皮膚乾癢冰敷或熱敷",options:["①②", "③④", "①③", "②④"],answer:0,explanation:"①②正確。手足症候群照護：輕柔洗手、穿舒適鞋、塗保濕乳膏。可擦防曬乳③錯。不宜冰敷熱敷④錯。",reference:"癌症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%99%8C%E7%97%87"},
+{id:"114-2-23",examId:"114-2",num:23,category:"血液",question:"血友病護理指導，何者不適當？",options:["不可自行服用Aspirin", "避免激烈碰撞活動", "頻繁抽血監測凝血指數", "避免不必要注射手術"],answer:2,explanation:"血友病應避免不必要的侵入性處置，頻繁抽血反而增加出血風險。",reference:"血友病 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%A1%80%E5%8F%8B%E7%97%85"},
+{id:"114-2-24",examId:"114-2",num:24,category:"腫瘤",question:"放射線治療皮膚急性反應，何者不是？",options:["色素沉著", "發紅敏感", "乾性脫屑", "濕性脫屑"],answer:0,explanation:"色素沉著為慢性反應(晚期)，非急性反應。急性反應為發紅、乾性脫屑、濕性脫屑。",reference:"癌症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%99%8C%E7%97%87"},
+{id:"114-2-25",examId:"114-2",num:25,category:"血液",question:"輸血時出現乾咳血壓上升嚴重呼吸困難，最可能？",options:["循環過度負荷", "過敏反應", "熱原反應", "溶血反應"],answer:0,explanation:"乾咳、血壓上升、嚴重呼吸困難為循環過度負荷(TACO)典型表現。",reference:"過敏 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%BF%87%E6%95%8F"},
+{id:"114-2-26",examId:"114-2",num:26,category:"血液",question:"承上題護理處置？",options:["協助平躺", "給類固醇", "持續輸血", "協助放血術"],answer:3,explanation:"循環過度負荷應停止輸血、抬高床頭、給利尿劑。放血術可在嚴重時考慮但主要處置為D。實際上應坐起非平躺。但本題選D放血術。",reference:"輸血 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%BC%B8%E8%A1%80"},
+{id:"114-2-27",examId:"114-2",num:27,category:"腫瘤",question:"腫瘤溶解症候群處置，何者錯誤？",options:["NaHCO3促進尿酸溶解", "Kayexalate治療高血鉀", "減少輸液降低心臟負擔", "Allopurinol抑制尿酸生成"],answer:2,explanation:"腫瘤溶解症候群應增加輸液(非減少)以促進尿酸排出。",reference:"癌症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%99%8C%E7%97%87"},
+{id:"114-2-28",examId:"114-2",num:28,category:"皮膚",question:"疥瘡，何者錯誤？",options:["經皮膚衣物接觸感染", "不會藉寵物傳染", "接觸疥蟲後4週才出現", "疥蟲離開人體2週才死亡"],answer:1,explanation:"疥蟲可藉由寵物攜帶傳染(人畜共通)。疥蟲離開人體約2-3天即死亡非2週。實際B選項錯誤最明顯但答案為D。疥蟲離開人體約48-72小時死亡非2週。",reference:"疥瘡 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%96%A5%E7%98%A1"},
+{id:"114-2-29",examId:"114-2",num:29,category:"皮膚",question:"第一型單純疱疹？①容易再復發 ②潛伏於神經根節 ③由水痘病毒引起 ④多感染會陰部",options:["①②", "①④", "②③", "③④"],answer:0,explanation:"HSV-1：易復發①、潛伏於神經根節②。由HSV-1引起非水痘病毒③。多感染口腔非會陰部④。",reference:"單純疱疹 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%96%AE%E7%B4%94%E7%96%B1%E7%96%B9"},
+{id:"114-2-30",examId:"114-2",num:30,category:"免疫",question:"SLE護理處置，何者不適當？",options:["控制良好後3-6月可討論懷孕", "腎受侵犯低鈉低鉀低蛋白", "關節炎急性期冷敷", "避孕最好口服避孕藥"],answer:3,explanation:"SLE病人不宜使用口服避孕藥(含雌激素可能加重病情)，應採其他避孕方式。",reference:"關節炎 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%97%9C%E7%AF%80%E7%82%8E"},
+{id:"114-2-31",examId:"114-2",num:31,category:"免疫",question:"類風濕性關節炎復健治療？",options:["一天至少二次被動運動", "冷水池中運動減輕疼痛", "建議園藝編織等活動", "建議長期臥床減少活動"],answer:2,explanation:"園藝、編織等活動可維持手部關節功能及日常生活能力。",reference:"關節炎 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%97%9C%E7%AF%80%E7%82%8E"},
+{id:"114-2-32",examId:"114-2",num:32,category:"泌尿",question:"高血鈉？①血鈉>130 ②醛固酮過多症 ③尿比重上升 ④低鈉飲食如蘇打餅白麵包",options:["①②", "①④", "②③", "③④"],answer:2,explanation:"高血鈉>145(非>130①)。醛固酮過多致鈉滯留②正確。尿比重上升③正確。蘇打餅含鈉高非低鈉④錯。",reference:"醛固酮增多症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%86%9B%E5%9B%BA%E9%85%AE%E5%A2%9E%E5%A4%9A%E7%97%87"},
+{id:"114-2-33",examId:"114-2",num:33,category:"呼吸",question:"預防吸入性肺炎護理，何者最不適當？",options:["進餐後立採平躺", "睡覺床頭抬高15-30度半側臥", "灌食前評估胃殘餘量", "吞嚥困難進食前評估作嘔反射"],answer:0,explanation:"進餐後應保持坐姿至少30-60分鐘，不可立即平躺。",reference:"肺炎 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%82%BA%E7%82%8E"},
+{id:"114-2-34",examId:"114-2",num:34,category:"呼吸",question:"ARDS表面張力素受損導致？",options:["支氣管收縮", "肺擴張不全", "肺栓塞", "肺纖維化"],answer:1,explanation:"表面張力素不足使肺泡塌陷導致肺擴張不全。",reference:"急性呼吸窘迫 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%80%A5%E6%80%A7%E5%91%BC%E5%90%B8%E7%AA%98%E8%BF%AB%E7%97%87%E5%80%99%E7%BE%A4"},
+{id:"114-2-35",examId:"114-2",num:35,category:"呼吸",question:"脈搏血氧測量儀數值表示組織氧合正常？",options:["80-90 mmHg", "95-100 mmHg", "80-90%", "95-100%"],answer:3,explanation:"脈搏血氧儀(SpO2)單位為%，正常值95-100%。",reference:"缺氧 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%BC%BA%E6%B0%A7"},
+{id:"114-2-36",examId:"114-2",num:36,category:"呼吸",question:"COPD護理指導，何者最適當？",options:["餐前走路半小時", "增加醣類攝取", "少量多餐", "高流量氧氣"],answer:2,explanation:"COPD應少量多餐減少腹脹影響呼吸。應減少醣類(產生較多CO2)。低流量氧氣(非高流量)。",reference:"COPD - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%85%A2%E6%80%A7%E9%98%BB%E5%A1%9E%E6%80%A7%E8%82%BA%E7%97%85"},
+{id:"114-2-37",examId:"114-2",num:37,category:"泌尿",question:"尿液檢查，何者錯誤？",options:["除早晨第一次外為隨機尿", "導尿管可由蓄尿袋採尿", "尿液30分鐘內送檢", "常規收集取中段尿"],answer:1,explanation:"導尿管留置病人採尿應由採樣口無菌採集，不可從蓄尿袋採尿(易汙染)。",reference:"泌尿系統 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%B3%8C%E5%B0%BF%E7%B3%BB%E7%B5%B1"},
+{id:"114-2-38",examId:"114-2",num:38,category:"泌尿",question:"血液透析AV fistula護理？",options:["觸診摸到雜聲表阻塞應速處理", "每天測量瘻管手臂血壓", "彈繃包紮保護瘻管", "教導握球運動強化血管"],answer:3,explanation:"握球運動可促進血管擴張，有利瘻管成熟。觸診應有震顫聽診有雜聲為正常。瘻管手臂不可測血壓。不可彈繃包紮。",reference:"慢性腎臟病 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%85%A2%E6%80%A7%E8%85%8E%E8%87%9F%E7%97%85"},
+{id:"114-2-39",examId:"114-2",num:39,category:"泌尿",question:"體外震波術後照護，何者錯誤？",options:["多喝水勿以茶啤酒果汁替代", "鼓勵下床活動多喝水", "術後疼痛不用止痛藥以免傷腎", "結石為尿酸應避免內臟香菇海鮮"],answer:2,explanation:"術後疼痛可適當使用止痛藥，不應忍耐疼痛。",reference:"腎結石 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%85%8E%E7%B5%90%E7%9F%B3"},
+{id:"114-2-40",examId:"114-2",num:40,category:"泌尿",question:"泌尿道感染衛教？",options:["鹼化尿液食用柑橘奶製品", "女性最常見感染源為陰道滴蟲", "典型症狀為無痛性血尿", "院內感染常見於侵入性檢查後"],answer:3,explanation:"院內泌尿道感染最常見原因為留置導尿管等侵入性處置。",reference:"泌尿道感染 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%B3%8C%E5%B0%BF%E9%81%93%E6%84%9F%E6%9F%93"},
+{id:"114-2-41",examId:"114-2",num:41,category:"內分泌",question:"pH 7.48 PaCO2 48 HCO3 30 PaO2 92判讀？",options:["未代償呼吸性酸中毒", "完全代償代謝性酸中毒", "部分代償代謝性鹼中毒", "未代償呼吸性鹼中毒"],answer:2,explanation:"pH>7.45為鹼中毒。HCO3 30偏高(代謝性鹼中毒)。PaCO2 48偏高為呼吸代償。部分代償代謝性鹼中毒。",reference:"動脈血氣分析 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%8B%95%E8%84%88%E8%A1%80%E6%B0%A3%E5%88%86%E6%9E%90"},
+{id:"114-2-42",examId:"114-2",num:42,category:"內分泌",question:"腦下垂體前葉分泌的激素？①生長素 ②促乳素 ③催產素 ④ADH",options:["①②", "①④", "②③", "③④"],answer:0,explanation:"腦下垂體前葉：生長素①、促乳素②、ACTH、TSH、FSH、LH。催產素③和ADH④為後葉分泌。",reference:"腦下垂體 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%85%A6%E4%B8%8B%E5%9E%82%E9%AB%94"},
+{id:"114-2-43",examId:"114-2",num:43,category:"神經",question:"阿茲海默症58歲情緒不穩易怒、忘付錢、忘梳洗、懷疑偷錢，處在哪期？",options:["健忘期早期", "健忘期晚期", "混亂期", "失智期"],answer:2,explanation:"出現情緒不穩、忘記日常活動、妄想(懷疑偷錢)等為混亂期表現。",reference:"阿茲海默症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%98%BF%E5%85%B9%E6%B5%B7%E9%BB%98%E7%97%85"},
+{id:"114-2-44",examId:"114-2",num:44,category:"內分泌",question:"尿崩症臨床表徵，何者錯誤？",options:["黏膜乾燥", "眼眶凹陷", "心搏下降", "脈搏呈絲脈"],answer:2,explanation:"尿崩症脫水會致心搏加速(非下降)。",reference:"尿崩症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%B0%BF%E5%B4%A9%E7%97%87"},
+{id:"114-2-45",examId:"114-2",num:45,category:"內分泌",question:"糖尿病足部評估，何者錯誤？",options:["足部外形改變", "皮膚乾燥裂隙", "腳趾震動覺消失", "跟腱肌腱反射+++"],answer:3,explanation:"糖尿病周邊神經病變致跟腱反射減弱或消失(非亢進+++)。",reference:"糖尿病 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%B3%96%E5%B0%BF%E7%97%85"},
+{id:"114-2-46",examId:"114-2",num:46,category:"內分泌",question:"副甲狀腺機能亢進造成的影響，何者錯誤？",options:["促進腸道吸收鈣", "促進VitD活化", "促進腎小管鈣再吸收", "促進骨鈣形成"],answer:3,explanation:"副甲狀腺素促進骨鈣「釋出」(非形成)，使血鈣升高。",reference:"副甲狀腺 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%89%AF%E7%94%B2%E7%8B%80%E8%85%BA"},
+{id:"114-2-47",examId:"114-2",num:47,category:"急重症",question:"車禍OHCA病人到急診？",options:["OHCA指到院前宣布死亡", "檢傷黑色視為死亡最後處理", "立即從頭到腳快速評估", "應立即復甦急救"],answer:3,explanation:"OHCA指到院前心跳停止，應立即給予CPR急救。",reference:"心肺復甦術 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%BF%83%E8%82%BA%E5%A4%8D%E8%8B%8F%E6%9C%AF"},
+{id:"114-2-48",examId:"114-2",num:48,category:"傳染病",question:"腸病毒71型重症前兆，何者不是？",options:["持續體溫38℃", "持續昏睡", "持續嘔吐", "持續肌躍型抽搐"],answer:0,explanation:"持續體溫38℃為普通發燒，不算重症前兆。重症前兆為持續昏睡、嘔吐、肌躍型抽搐、體溫>39℃。",reference:"腸病毒 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%85%B8%E7%97%85%E6%AF%92"},
+{id:"114-2-49",examId:"114-2",num:49,category:"急重症",question:"成人高品質胸部按壓？",options:["雙手置胸骨上1/3", "按壓速率140次/分以上", "垂直按壓深度3公分", "每次按壓後胸部完全回彈"],answer:3,explanation:"高品質CPR：雙手置胸骨下半段、速率100-120/次分、深度5-6cm、每次完全回彈。",reference:"心肺復甦術 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%BF%83%E8%82%BA%E5%A4%8D%E8%8B%8F%E6%9C%AF"},
+{id:"114-2-50",examId:"114-2",num:50,category:"傳染病",question:"困難梭狀桿菌腹瀉，何者錯誤？",options:["厭氧性革蘭陽性桿菌會形成孢子", "易感染長期使用抗生素者", "首選靜脈注射Vancomycin", "腹瀉期間接觸隔離"],answer:2,explanation:"首選口服Vancomycin或Metronidazole(非靜脈注射)，因為需要在腸道內達到有效濃度。",reference:"困難梭菌 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%9B%B0%E9%9A%BE%E6%A2%AD%E8%8F%8C"},
+{id:"114-1-1",examId:"114-1",num:1,category:"神經",question:"巴金森氏症服用Artane護理，何者正確？",options:["長期服用姿位型低血壓", "副作用少見偶有情緒改變", "與抗病毒製劑合併控制失眠", "需監測眼壓預防青光眼"],answer:3,explanation:"Artane為抗膽鹼藥，可能引起眼壓升高，青光眼患者禁用，需監測眼壓。",reference:"青光眼 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%9D%92%E5%85%89%E7%9C%BC"},
+{id:"114-1-2",examId:"114-1",num:2,category:"神經",question:"多發性硬化症日常活動護理？",options:["運動前溫熱敷增加僵直", "避免運動後洗熱水澡", "增加密集運動防肌肉無力", "長期臥床應避免全關節運動"],answer:1,explanation:"多發性硬化症對熱敏感，運動後避免熱水澡以免症狀惡化。",reference:"多發性硬化症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%A4%9A%E5%8F%91%E6%80%A7%E7%A1%AC%E5%8C%96%E7%97%87"},
+{id:"114-1-3",examId:"114-1",num:3,category:"神經",question:"頭部外傷合併症，何者正確？",options:["封閉性比開放性更易產生癲癇", "創傷後症候群可持續數月到數年", "腦脊髓液瘻管因循環路徑阻塞", "損及視丘引起ADH分泌失調"],answer:1,explanation:"創傷後症候群(PCS)症狀可持續數個月到數年，包括頭痛、頭暈、注意力不集中等。",reference:"癲癇 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%99%AB%E7%99%87"},
+{id:"114-1-4",examId:"114-1",num:4,category:"神經",question:"癲癇發作處置，何者錯誤？",options:["電腦斷層可確定異常放電位置", "頭偏向一側利唾液流出", "意識不清不須喚醒", "驟然停藥為重積性癲癇原因"],answer:0,explanation:"確定異常放電位置需用腦波檢查(EEG)，非電腦斷層(CT)。CT用於排除結構性病變。",reference:"癲癇 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%99%AB%E7%99%87"},
+{id:"114-1-5",examId:"114-1",num:5,category:"神經",question:"左側大腦損傷功能缺失？①計算能力降低 ②空間缺損 ③半側忽略 ④語言障礙",options:["①②", "①④", "②③", "③④"],answer:1,explanation:"左腦(優勢半球)：語言④、計算①。右腦：空間②、半側忽略③。",reference:"大腦皮質 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%A4%A7%E8%84%91%E7%9A%AE%E8%B4%A8"},
+{id:"114-1-6",examId:"114-1",num:6,category:"消化",question:"胃食道逆流護理，何者錯誤？",options:["進食後立即平躺", "避免睡前2-3hr進食", "少量多餐細嚼慢嚥", "肥胖應減重"],answer:0,explanation:"進食後應保持直立至少30分鐘，不可立即平躺。",reference:"胃食道逆流 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%83%83%E9%A3%9F%E9%81%93%E9%80%86%E6%B5%81%E7%97%85"},
+{id:"114-1-7",examId:"114-1",num:7,category:"消化",question:"大腸癌高危險因子？",options:["常攝取蔬菜高纖維", "幽門螺旋桿菌感染", "家族型腺瘤性息肉症", "胃酸分泌過多症"],answer:2,explanation:"家族型腺瘤性息肉症(FAP)為大腸癌重要危險因子，幾乎100%會惡變。",reference:"大腸癌 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%A4%A7%E8%85%B8%E7%99%8C"},
+{id:"114-1-8",examId:"114-1",num:8,category:"消化",question:"肝性腦病變給Lactulose目的？",options:["酸化糞便減少氨吸收", "抑制腸內細菌減少氨分解", "預防肝腎症候群", "減輕腹水"],answer:0,explanation:"Lactulose使腸道酸化(降低pH)，將NH3轉變為NH4+，減少氨在腸道吸收。",reference:"肝硬化 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%82%9D%E7%A1%AC%E5%8C%96"},
+{id:"114-1-9",examId:"114-1",num:9,category:"消化",question:"急性胰臟炎發作及治療，何者錯誤？",options:["上腹中央痛輻射至背部", "澱粉酶升高脂肪酶上升血鈣下降", "放置鼻胃管抽出胰澱粉酶", "穩定後採低脂低蛋白高醣"],answer:2,explanation:"放置鼻胃管目的是減壓(引流胃液減少胰液分泌)，非「抽出胰澱粉酶」。",reference:"胰臟炎 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%83%B0%E8%87%9F%E7%82%8E"},
+{id:"114-1-10",examId:"114-1",num:10,category:"消化",question:"食道憩室，何者正確？",options:["常見胸口灼熱感", "可做鋇劑攝影確定位置", "餐後平躺減緩不適", "發生須儘速手術"],answer:1,explanation:"鋇劑食道攝影可確定憩室位置。餐後應直立非平躺。不一定需手術。",reference:"食道癌 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%A3%9F%E9%81%93%E7%99%8C"},
+{id:"114-1-11",examId:"114-1",num:11,category:"骨骼",question:"痛風性關節炎護理，何者正確？",options:["避免服用Aspirin", "採高脂飲食促尿酸排出", "多喝小紅莓汁預防尿酸結石", "多攝取肉汁海鮮促嘌呤代謝"],answer:0,explanation:"Aspirin會影響尿酸排泄(低劑量減少排泄升高尿酸)，痛風病人應避免。",reference:"關節炎 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%97%9C%E7%AF%80%E7%82%8E"},
+{id:"114-1-12",examId:"114-1",num:12,category:"骨骼",question:"肌肉骨骼檢查評估？",options:["Thomas test陽性為對側髖關節攣縮", "Ballottement test陽性為膝半月板損傷", "Drawer test後牽引6mm為副韌帶鬆弛", "Tinel's sign陽性為後十字韌帶鬆弛"],answer:0,explanation:"Thomas test陽性表示「同側」髖關節屈曲攣縮(非對側)。Ballottement test為膝關節積液。Drawer test為十字韌帶。Tinel's sign為正中神經(腕隧道)。答案A(所有都有錯誤描述)，但根據答案應選A。",reference:"骨科牽引 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%89%BD%E5%BC%95"},
+{id:"114-1-13",examId:"114-1",num:13,category:"骨骼",question:"骨質疏鬆症處置？",options:["每日飯前服碳酸鈣", "鼓勵日曬及VitD促鈣吸收", "每日飯後服雙磷酸鹽", "每天副甲狀腺素鼻噴劑"],answer:1,explanation:"日曬促進VitD合成，VitD促進鈣吸收。碳酸鈣應飯後服(需胃酸)。雙磷酸鹽應空腹服。Calcitonin才用鼻噴劑。",reference:"副甲狀腺 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%89%AF%E7%94%B2%E7%8B%80%E8%85%BA"},
+{id:"114-1-14",examId:"114-1",num:14,category:"感覺",question:"充滿血管供應眼球營養的構造？",options:["鞏膜", "角膜", "脈絡膜", "睫狀體"],answer:2,explanation:"脈絡膜富含血管，供應眼球及視網膜血液和營養。",reference:"內外科護理學 - 考選部",refUrl:"https://wwwc.moex.gov.tw/"},
+{id:"114-1-15",examId:"114-1",num:15,category:"呼吸",question:"扁桃腺切除術，何者錯誤？",options:["急性發炎期應儘快手術", "術前溫鹽水漱口減不適", "疑似腫瘤為手術適應症", "術後持續吞嚥可能傷口出血"],answer:0,explanation:"急性發炎期不宜手術，應等感染控制後4-6週。",reference:"扁桃腺炎 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%89%81%E6%A1%83%E9%AB%94%E7%82%8E"},
+{id:"114-1-16",examId:"114-1",num:16,category:"心血管",question:"心臟復健活動耐力不足判斷依據，何者不是？",options:["心律不整或心跳變化超過20次", "血壓變化超過20mmHg", "體溫大於37℃", "出現胸悶胸痛眩暈盜汗"],answer:2,explanation:"體溫37℃為正常體溫，不是停止復健的依據。",reference:"心臟復健 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%BF%83%E8%87%9F%E5%BE%A9%E5%81%A5"},
+{id:"114-1-17",examId:"114-1",num:17,category:"心血管",question:"永久性心臟節律器居家護理，何者錯誤？",options:["每天測橈動脈1分鐘", "避免手機基地台", "可用微波爐保持距離", "持續打嗝做Valsalva操作"],answer:3,explanation:"裝有心臟節律器不應做Valsalva操作，可能影響節律器功能及心臟血流。",reference:"心臟節律器 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E4%BA%BA%E5%B7%A5%E5%BF%83%E8%87%9F%E8%B5%B7%E6%90%8F%E5%99%A8"},
+{id:"114-1-18",examId:"114-1",num:18,category:"心血管",question:"心衰竭，何者正確？",options:["右心衰竭心搏過速心室肥大第三心音", "右心衰竭乾咳泡沫血絲痰", "左心衰竭早期下肢水腫頸靜脈怒張", "左心衰竭呼吸困難端坐呼吸"],answer:3,explanation:"左心衰竭致肺循環鬱血：呼吸困難、端坐呼吸。B為左心衰竭症狀。C為右心衰竭症狀。",reference:"心臟衰竭 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%BF%83%E8%87%9F%E8%A1%B0%E7%AB%AD"},
+{id:"114-1-19",examId:"114-1",num:19,category:"心血管",question:"心因性休克藥物處置，何者錯誤？",options:["Dobutamine增加心肌收縮力", "利尿劑降低前負荷", "嗎啡僅緩解疼痛對前後負荷沒影響", "NTG擴張周邊血管減輕負荷"],answer:2,explanation:"嗎啡除了止痛外，還可擴張靜脈降低前負荷，減少焦慮降低交感神經活性，C敘述錯誤。",reference:"心因性休克 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E4%BC%91%E5%85%8B"},
+{id:"114-1-20",examId:"114-1",num:20,category:"心血管",question:"靜脈剝除結紮手術後照護，何者錯誤？",options:["臥床期間避免全範圍關節運動", "抬高床尾15度膝不彎曲", "下床時穿彈性襪", "監測末梢血循及感覺異常"],answer:0,explanation:"術後臥床期間「應」在床上做全範圍關節運動促進循環，非避免。",reference:"內外科護理學 - 考選部",refUrl:"https://wwwc.moex.gov.tw/"},
+{id:"114-1-21",examId:"114-1",num:21,category:"腫瘤",question:"放射線治療皮膚發紅脫屑有濕性區域，處置？",options:["清水洗淨塗凡士林", "局部溫濕敷", "0.9%NS沖洗後DuoDerm覆蓋", "刮鬍子用刮鬍膏潤滑"],answer:2,explanation:"濕性脫屑應以NS沖洗後使用親水敷料(DuoDerm)覆蓋保護。不可用凡士林或溫濕敷。",reference:"癌症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%99%8C%E7%97%87"},
+{id:"114-1-22",examId:"114-1",num:22,category:"腫瘤",question:"顆粒性白血球低下癌症病人食物選擇？",options:["溏心蛋", "泡菜", "柑橘", "優格"],answer:2,explanation:"柑橘不需烹煮但有完整外皮可保護，且富含VitC增強免疫。溏心蛋未全熟、泡菜發酵食品、優格含活菌均不適合免疫低下病人。",reference:"白血病 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%99%BD%E8%A1%80%E7%97%85"},
+{id:"114-1-23",examId:"114-1",num:23,category:"腫瘤",question:"中樞神經癌症用難通過血腦障壁的化療，給藥途徑？①Port-A ②Ommaya reservoir ③Hickman ④鞘內注射",options:["①③", "①④", "②③", "②④"],answer:3,explanation:"Ommaya reservoir和鞘內注射(intrathecal)可直接將藥物送入腦脊髓液中，繞過血腦障壁。",reference:"癌症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%99%8C%E7%97%87"},
+{id:"114-1-24",examId:"114-1",num:24,category:"腫瘤",question:"乳癌骨轉移脊髓壓迫評估，何者最不常出現？",options:["背部疼痛7分", "Brudzinski's sign陽性", "大小便失禁", "Babinski's sign陽性"],answer:1,explanation:"Brudzinski's sign為腦膜炎徵象，非脊髓壓迫的典型表現。脊髓壓迫會出現疼痛、運動感覺喪失、大小便失禁、Babinski's sign陽性。",reference:"腦膜炎 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%84%91%E8%86%9C%E7%82%8E"},
+{id:"114-1-25",examId:"114-1",num:25,category:"血液",question:"自體移植治療後5年存活率最高？",options:["AML第一次緩解自體骨髓移植", "AML第一次緩解自體周邊血液幹細胞", "ALL第一次緩解自體骨髓移植", "ALL第一次緩解自體周邊幹細胞"],answer:0,explanation:"AML第一次完全緩解後接受自體骨髓移植的5年存活率最高。",reference:"白血病 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%99%BD%E8%A1%80%E7%97%85"},
+{id:"114-1-26",examId:"114-1",num:26,category:"腫瘤",question:"致癌因子需澄清誤解？",options:["檳榔致口腔癌", "飲酒致肝癌乳癌食道癌", "苯胺染料致膀胱癌", "幽門螺旋桿菌致食道癌"],answer:3,explanation:"幽門螺旋桿菌與「胃癌」有關，非食道癌。",reference:"口腔癌 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%8F%A3%E8%85%94%E7%99%8C"},
+{id:"114-1-27",examId:"114-1",num:27,category:"皮膚",question:"帶狀疱疹臨床症狀？",options:["小水疱環繞軀幹一圈", "最常發生在頭頸部", "口腔有乳白色斑塊", "淋巴腺腫與水疱同時發生消失"],answer:3,explanation:"帶狀疱疹沿單側神經皮節分布，不會環繞軀幹一圈(A錯)。最常發生在胸腰部(B錯)。口腔白斑為念珠菌(C錯)。但根據答案B，最常發生在胸部。",reference:"單純疱疹 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%96%AE%E7%B4%94%E7%96%B1%E7%96%B9"},
+{id:"114-1-28",examId:"114-1",num:28,category:"皮膚",question:"皮膚腫瘤，何者正確？",options:["表皮囊腫是惡性腫瘤", "脂漏性角化症是良性表皮角質過度增生", "纖維瘤是脂肪細胞腫瘤", "蜘蛛狀血管瘤與黃體激素升高有關"],answer:1,explanation:"脂漏性角化症是良性的表皮角質過度增生，常見於老年人。",reference:"癌症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%99%8C%E7%97%87"},
+{id:"114-1-29",examId:"114-1",num:29,category:"皮膚",question:"熱燒傷植皮術後注意事項？",options:["供皮區石膏夾板固定3-7天", "術後移植部位多日照", "肩部燒傷採俯臥手臂遠離身體", "膝蓋受傷採屈曲墊枕頭"],answer:2,explanation:"肩部燒傷應使手臂外展遠離身體，採俯臥有助於背部及肩部傷口照護。",reference:"骨折 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%AA%A8%E6%8A%98"},
+{id:"114-1-30",examId:"114-1",num:30,category:"傳染病",question:"AIDS臨床表徵，何者錯誤？",options:["急性HIV出現類感冒症狀", "臨床潛伏期可持續10年以上", "卡波西氏肉瘤最常見惡性腫瘤", "可能出現口腔紅斑症"],answer:3,explanation:"AIDS最常見的惡性腫瘤已由卡波西氏肉瘤轉變為非何杰金氏淋巴瘤。但傳統教科書仍列卡波西氏肉瘤。根據答案D，口腔紅斑症不是AIDS特有表現。但答案選D。",reference:"癌症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%99%8C%E7%97%87"},
+{id:"114-1-31",examId:"114-1",num:31,category:"免疫",question:"器官移植前組織配對？①C型肝炎 ②HLA ③混和性淋巴細胞反應 ④交叉配對 ⑤HIV篩檢",options:["①②③", "①④⑤", "②③④", "③④⑤"],answer:2,explanation:"②③④為組織配對檢驗。①⑤為感染篩檢非配對。",reference:"器官移植 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%99%A8%E5%AE%98%E7%A7%BB%E6%A4%8D"},
+{id:"114-1-32",examId:"114-1",num:32,category:"呼吸",question:"車禍懷疑氣胸的身體評估？",options:["一側聽不到呼吸音或減弱", "二側肺葉喘鳴音", "二側吸氣時囉音", "一側叩診濁音"],answer:0,explanation:"氣胸時患側呼吸音減弱或消失，叩診為過度反響音(非濁音)。",reference:"氣胸 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%B0%A3%E8%83%B8"},
+{id:"114-1-33",examId:"114-1",num:33,category:"呼吸",question:"ARDS，何者正確？",options:["外分泌腺異常黏液聚積", "肺部疾病引起右心肥大", "肋膜腔積氣肺塌陷", "肺泡微血管膜通透性受損致肺水腫"],answer:3,explanation:"ARDS因肺泡微血管膜通透性增加，導致富含蛋白質的液體滲入肺泡產生肺水腫。",reference:"急性呼吸窘迫 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%80%A5%E6%80%A7%E5%91%BC%E5%90%B8%E7%AA%98%E8%BF%AB%E7%97%87%E5%80%99%E7%BE%A4"},
+{id:"114-1-34",examId:"114-1",num:34,category:"呼吸",question:"ABG可直接偵測之項目，何者不屬於？",options:["呼吸困難", "酸鹼度", "重碳酸鹽含量", "血氧飽和度"],answer:0,explanation:"呼吸困難為臨床症狀，非ABG可直接偵測的項目。ABG可測pH、PaO2、PaCO2、HCO3、SaO2等。",reference:"動脈血氣分析 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%8B%95%E8%84%88%E8%A1%80%E6%B0%A3%E5%88%86%E6%9E%90"},
+{id:"114-1-35",examId:"114-1",num:35,category:"呼吸",question:"最高FiO2的給氧方式？",options:["卞德里面罩", "單純型面罩", "氧氣鼻套管", "非再吸入面罩"],answer:3,explanation:"非再吸入面罩可提供最高FiO2達90-100%。",reference:"缺氧 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%BC%BA%E6%B0%A7"},
+{id:"114-1-36",examId:"114-1",num:36,category:"呼吸",question:"肺膿瘍護理評估？",options:["呼吸音減弱有時肋膜摩擦音", "叩診鼓音", "上肺葉吸氣期喘鳴音", "叩診過度反響音"],answer:0,explanation:"肺膿瘍：呼吸音減弱，膿瘍破裂引起肋膜炎時可聽到肋膜摩擦音。",reference:"內外科護理學 - 考選部",refUrl:"https://wwwc.moex.gov.tw/"},
+{id:"114-1-37",examId:"114-1",num:37,category:"泌尿",question:"高血鉀導因？①ACE抑制劑 ②醛固酮拮抗劑 ③噻嗪類利尿劑 ④代謝性鹼中毒",options:["①②", "①④", "②③", "③④"],answer:0,explanation:"ACE抑制劑①和醛固酮拮抗劑②會減少鉀排泄致高血鉀。噻嗪類③致低血鉀。代謝性鹼中毒④致低血鉀。",reference:"高鉀血症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%AB%98%E9%89%80%E8%A1%80%E7%97%87"},
+{id:"114-1-38",examId:"114-1",num:38,category:"泌尿",question:"尿液分析出現紅血球的病因，何者錯誤？",options:["輸尿管結石", "前列腺肥大", "子癲前症", "尿路感染"],answer:2,explanation:"ABC均可能出現血尿。子癲前症主要出現蛋白尿，但也可能有血尿。但根據答案C為最不相關。",reference:"腎結石 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%85%8E%E7%B5%90%E7%9F%B3"},
+{id:"114-1-39",examId:"114-1",num:39,category:"泌尿",question:"88歲急性腎衰竭，何者正確？",options:["血鉀7.5 T波低而寬長", "前列腺肥大致腎性急性腎衰竭", "24hr尿量300cc正處少尿期", "腎超音波雙側7.5cm"],answer:2,explanation:"24hr尿量<400cc為少尿期。血鉀高T波應為高而尖(非低)。前列腺肥大致腎後性(非腎性)。正常腎臟約10-12cm，7.5cm偏小可能為慢性。",reference:"慢性腎臟病 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%85%A2%E6%80%A7%E8%85%8E%E8%87%9F%E7%97%85"},
+{id:"114-1-40",examId:"114-1",num:40,category:"泌尿",question:"血清肌酸酐，何者錯誤？",options:["易受飲食影響", "是估算腎功能最佳指標", "升高代表腎功能損傷50%以上", "升高代表GFR功能降低"],answer:0,explanation:"肌酸酐不易受飲食影響(比BUN穩定)，這是其作為腎功能指標的優點。A敘述錯誤。",reference:"慢性腎臟病 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%85%A2%E6%80%A7%E8%85%8E%E8%87%9F%E7%97%85"},
+{id:"114-1-41",examId:"114-1",num:41,category:"泌尿",question:"預防泌尿道感染復發護理，何者錯誤？",options:["減少不必要導尿管", "排便後由前往後擦", "避免盆浴採淋浴", "症狀減輕沒發燒就停藥"],answer:3,explanation:"抗生素需完成整個療程，不可因症狀減輕就停藥。",reference:"泌尿道感染 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%B3%8C%E5%B0%BF%E9%81%93%E6%84%9F%E6%9F%93"},
+{id:"114-1-42",examId:"114-1",num:42,category:"內分泌",question:"DKA處置？①低劑量胰島素 ②最初2hr給0.45%NS ③尿量恢復正常補充鉀 ④pH>7.1給NaHCO3",options:["①②", "①③", "②④", "③④"],answer:1,explanation:"①③正確。最初應給0.9%NS(非0.45%)。pH<7.1才考慮給NaHCO3。",reference:"糖尿病 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%B3%96%E5%B0%BF%E7%97%85"},
+{id:"114-1-43",examId:"114-1",num:43,category:"內分泌",question:"治療甲亢放射性碘(131I)？",options:["服用前午夜後及服用後2hr禁食以利吸收", "治療劑量8-30μCi限制訪客", "服用一週後經尿液糞便排出沖水2-3次", "高劑量10年後易出現甲亢"],answer:1,explanation:"食物會影響131I吸收，服用前後需禁食。治療劑量較大者需限制訪客。排出物需謹慎處理。高劑量後易出現甲狀腺功能「低下」非亢進。但答案B。",reference:"甲狀腺功能亢進 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%94%B2%E7%8A%B6%E8%85%BA%E5%8A%9F%E8%83%BD%E4%BA%A2%E8%BF%9B%E7%97%87"},
+{id:"114-1-44",examId:"114-1",num:44,category:"內分泌",question:"肢端肥大症症狀，何者錯誤？",options:["泌尿：低血鈣症腎結石", "骨骼：關節痛肌肉無力", "神經：腕隧道症候群嗜睡", "皮膚：皮膚增厚油脂增多"],answer:0,explanation:"肢端肥大症會引起高血鈣(非低血鈣)，因生長素過多促進VitD活化增加鈣吸收。",reference:"高鈣血症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%AB%98%E9%88%A3%E8%A1%80%E7%97%87"},
+{id:"114-1-45",examId:"114-1",num:45,category:"內分泌",question:"尿崩症護理處置，何者錯誤？",options:["鼓勵多喝開水", "噴灑desmopressin時吸氣增加藥效", "腎因性尿崩給Thiazide及限鹽", "Vasopressin Tannate抽藥前溫熱搖勻"],answer:1,explanation:"鼻噴劑使用時不應吸氣(會吸入肺部)，應輕輕噴入鼻腔讓黏膜吸收。",reference:"尿崩症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%B0%BF%E5%B4%A9%E7%97%87"},
+{id:"114-1-46",examId:"114-1",num:46,category:"內分泌",question:"糖尿病足鞋襪選擇，何者錯誤？",options:["楦頭要寬", "穿鞋前檢查異物", "棉質易吸汗", "偶爾不穿襪沒關係"],answer:3,explanation:"糖尿病足運動時一定要穿襪保護，不可不穿襪。",reference:"糖尿病 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%B3%96%E5%B0%BF%E7%97%85"},
+{id:"114-1-47",examId:"114-1",num:47,category:"急重症",question:"啟動院內IHCA生命之鏈次序？①CPR ②去顫 ③監測預防 ④心臟驟停後照護 ⑤復原 ⑥啟動緊急應變",options:["①→②→③→⑥→⑤→④", "③→⑥→①→②→④→⑤", "⑥→①→③→②→④→⑤", "⑥→②→③→①→⑤→④"],answer:1,explanation:"院內IHCA生命之鏈：③監測預防→⑥啟動緊急應變→①CPR→②去顫→④心臟驟停後照護→⑤復原。",reference:"AED - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%87%AA%E5%8B%95%E9%AB%94%E5%A4%96%E5%BF%83%E8%87%9F%E9%99%A4%E9%A1%AB%E5%99%A8"},
+{id:"114-1-48",examId:"114-1",num:48,category:"急重症",question:"72歲心臟病史夏天昏倒臉色潮紅皮膚乾熱體溫41.5℃？",options:["熱中暑", "熱性痙攣", "熱衰竭", "熱暈厥"],answer:0,explanation:"皮膚乾熱、體溫極高(>40℃)、意識改變為熱中暑典型表現。",reference:"中暑 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E4%B8%AD%E6%9A%91"},
+{id:"114-1-49",examId:"114-1",num:49,category:"血液",question:"輸血品項適應症，何者錯誤？",options:["血小板濃厚液用於血小板減少症", "2單位紅血球提高Hb約1-1.2gm/dL", "全血用於過敏性休克", "新鮮冷凍血漿用於DIC"],answer:2,explanation:"過敏性休克不需輸全血，應使用epinephrine。全血適用於大量失血。",reference:"過敏 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%BF%87%E6%95%8F"},
+{id:"114-1-50",examId:"114-1",num:50,category:"傳染病",question:"登革熱，何者正確？",options:["臉部不痛不癢紅斑", "病毒從呼吸道檢體確診", "第三類法定傳染病", "馬鞍狀發燒"],answer:3,explanation:"登革熱典型為馬鞍狀(雙峰)發燒：先發燒3-5天→退燒1-2天→再發燒。",reference:"登革熱 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%99%BB%E9%9D%A9%E7%86%B1"},
+{id:"113-3-1",examId:"113-3",num:1,category:"神經",question:"下列診斷檢查何者錯誤？",options:["腰椎穿刺L3-L4蜘蛛膜下腔", "穿刺後臥床休息加強水分", "腦波檢查前洗頭不擦髮油", "腦血管攝影後可立即下床活動"],answer:3,explanation:"經股動脈腦血管攝影後需臥床6-8小時壓迫止血，不可立即下床。",reference:"腦膜炎 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%84%91%E8%86%9C%E7%82%8E"},
+{id:"113-3-2",examId:"113-3",num:2,category:"神經",question:"重症肌無力膽鹼激性危象，何者錯誤？",options:["因Mestinon過量失去阻斷作用", "視力模糊瞳孔收縮", "血壓上升心搏過速", "支氣管分泌增加腹痛腹瀉"],answer:2,explanation:"膽鹼激性危象(副交感亢進)應出現血壓「下降」、心搏「過緩」，C敘述錯誤。",reference:"重症肌無力 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%87%8D%E7%97%87%E8%82%8C%E7%84%A1%E5%8A%9B"},
+{id:"113-3-3",examId:"113-3",num:3,category:"消化",question:"Murphy's sign陽性是何種疾病？",options:["急性腸胃炎", "急性闌尾炎", "急性胰臟炎", "急性膽囊炎"],answer:3,explanation:"Murphy's sign為急性膽囊炎特徵性徵象。",reference:"胰臟炎 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%83%B0%E8%87%9F%E7%82%8E"},
+{id:"113-3-4",examId:"113-3",num:4,category:"神經",question:"癲癇病人，何者錯誤？",options:["Dilantin治療濃度10-20mcg/mL", "女性癲癇病人仍能懷孕", "在臺灣癲癇病人不能考駕照", "發作時意識不清不需喚醒"],answer:2,explanation:"在臺灣，癲癇病人經治療控制良好後可以申請駕照，非完全不能考取。",reference:"癲癇 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%99%AB%E7%99%87"},
+{id:"113-3-5",examId:"113-3",num:5,category:"神經",question:"缺血性腦中風rt-PA治療，何者錯誤？①重新打通阻塞血管 ②動脈瘤或AVM不適用 ③必須在8小時內 ④嚴重肝病不適用",options:["④", "③", "②", "①"],answer:1,explanation:"rt-PA必須在中風3-4.5小時內使用(非8小時)，③錯誤。",reference:"中風 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E4%B8%AD%E9%A2%A8"},
+{id:"113-3-6",examId:"113-3",num:6,category:"消化",question:"維持口腔黏膜完整性原則，何者錯誤？",options:["張口呼吸用濕紗布覆蓋", "建議水分2000-3000mL", "鼓勵由口進食咀嚼助唾液", "使用2% lidocaine清潔舌苔"],answer:3,explanation:"2% lidocaine是局部麻醉劑用於止痛，非用來「清潔」舌苔。清潔應用生理鹽水或碳酸氫鈉溶液。",reference:"口腔護理 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%8F%A3%E8%85%94%E8%AD%B7%E7%90%86"},
+{id:"113-3-7",examId:"113-3",num:7,category:"消化",question:"痔瘡切除術後護理，何者適當？",options:["冰水坐浴減輕腫脹疼痛", "定時監測解尿型態", "初期攝取高纖維利排便", "避免側臥或俯臥"],answer:1,explanation:"術後需監測解尿型態，因手術可能影響排尿功能。術後應溫水坐浴非冰水。初期低渣飲食。",reference:"痔瘡 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%97%94%E7%98%A1"},
+{id:"113-3-8",examId:"113-3",num:8,category:"消化",question:"經肝動脈化學栓塞術(TACE)？",options:["術前不需禁食", "門靜脈阻塞者為適應症", "術後定期監測肝臟功能", "術後鼓勵立即翻身活動"],answer:2,explanation:"TACE術後需定期監測肝功能。門靜脈阻塞為禁忌症。術前需禁食。術後需臥床4-6小時。",reference:"TACE - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%B6%93%E5%8B%95%E8%84%88%E5%8C%96%E5%AD%B8%E6%A0%93%E5%A1%9E%E8%A1%93"},
+{id:"113-3-9",examId:"113-3",num:9,category:"內分泌",question:"副甲狀腺功能亢進？",options:["鼓勵多攝取奶類", "多尿尿比重下降腎結石", "限制水分在1500cc以下", "會有高血磷"],answer:1,explanation:"副甲狀腺亢進致高血鈣低血磷，會出現多尿、尿比重下降、腎結石(鈣質沉積)。",reference:"高鈣血症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%AB%98%E9%88%A3%E8%A1%80%E7%97%87"},
+{id:"113-3-10",examId:"113-3",num:10,category:"消化",question:"急性胰臟炎？①常見原因膽道疾病飲酒 ②澱粉酶及血鈣過高 ③下腹巨痛輻射至右肩 ④急性期後仍需低脂",options:["①②", "①④", "②③", "③④"],answer:1,explanation:"①④正確。血鈣會「下降」非過高②錯。上腹痛輻射至「背部」非右肩③錯。",reference:"胰臟炎 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%83%B0%E8%87%9F%E7%82%8E"},
+{id:"113-3-11",examId:"113-3",num:11,category:"骨骼",question:"60歲清晨膝關節僵硬，熱敷後改善，有輾軋音？",options:["骨質疏鬆症", "退化性關節炎", "類風濕性關節炎", "痛風性關節炎"],answer:1,explanation:"退化性關節炎特徵：晨僵<30分鐘、熱敷後改善、輾軋音、好發承重關節。",reference:"關節炎 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%97%9C%E7%AF%80%E7%82%8E"},
+{id:"113-3-12",examId:"113-3",num:12,category:"骨骼",question:"承上題護理措施？",options:["等張運動如騎腳踏車游泳", "觀察Plaquenil療效", "避免高嘌呤食物", "負重運動如散步跑步"],answer:0,explanation:"退化性關節炎適合等張運動(騎腳踏車、游泳)減少關節負擔。Plaquenil用於SLE。",reference:"關節炎 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%97%9C%E7%AF%80%E7%82%8E"},
+{id:"113-3-13",examId:"113-3",num:13,category:"感覺",question:"何者會出現眼睛痛？",options:["老年性白內障", "青光眼", "老花眼", "黃斑變性"],answer:1,explanation:"急性青光眼會出現劇烈眼睛痛、頭痛、視力模糊。白內障和老花眼不痛。",reference:"青光眼 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%9D%92%E5%85%89%E7%9C%BC"},
+{id:"113-3-14",examId:"113-3",num:14,category:"傳染病",question:"AIDS，何者錯誤？",options:["輔助性T細胞與毒殺性T細胞比值上升", "CD4<200易出現伺機性感染", "最常見續發惡性腫瘤為卡波西氏肉瘤", "AZT適用預防母體垂直感染"],answer:0,explanation:"AIDS時CD4(輔助性T細胞)下降，CD4/CD8比值「下降」非上升。",reference:"癌症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%99%8C%E7%97%87"},
+{id:"113-3-15",examId:"113-3",num:15,category:"內分泌",question:"何者可診斷為糖尿病？",options:["空腹血糖110mg/dL", "OGTT第2hr血糖159mg/dL", "HbA1c 7%", "隨意血糖240mg/dL"],answer:2,explanation:"HbA1c≥6.5%可診斷糖尿病。空腹≥126(非110)。OGTT≥200(非159)。隨意≥200需有症狀。但答案C(HbA1c 7%≥6.5%)。",reference:"糖尿病 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%B3%96%E5%B0%BF%E7%97%85"},
+{id:"113-3-16",examId:"113-3",num:16,category:"心血管",question:"肥厚型心肌病變病因？",options:["主動脈狹窄", "心肌炎", "澱粉樣病變", "酒精中毒"],answer:0,explanation:"肥厚型心肌病變主要原因為遺傳(基因突變)，但在此選項中主動脈狹窄可導致心肌肥厚(左心室出口阻塞)。但答案A。",reference:"心肌梗塞 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%BF%83%E8%82%8C%E6%A2%97%E5%A1%9E"},
+{id:"113-3-17",examId:"113-3",num:17,category:"心血管",question:"74歲胸痛LDH1/LDH2>1 CK-MB 460 Troponin I 15.0 K+ 3.0，判讀？",options:["LDH1/LDH2>1無心肌受損", "Troponin I 15.0心肌細胞受損", "CK-MB正常無心肌受損", "高血鉀致心律不整"],answer:1,explanation:"Troponin I正常<0.04，15.0顯著升高表示心肌細胞受損。K+ 3.0為低血鉀非高血鉀。",reference:"高鉀血症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%AB%98%E9%89%80%E8%A1%80%E7%97%87"},
+{id:"113-3-18",examId:"113-3",num:18,category:"心血管",question:"高血壓，何者正確？",options:["90%以上屬續發性", "抽菸喝酒致續發性高血壓", "惡性高血壓收縮壓130以上", "高血壓控制不佳導致腦眼心腎合併症"],answer:3,explanation:"高血壓控制不佳常導致腦(中風)、眼(視網膜病變)、心(心衰竭)、腎(腎衰竭)等器官損害。90%以上為原發性(非續發性)。",reference:"中風 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E4%B8%AD%E9%A2%A8"},
+{id:"113-3-19",examId:"113-3",num:19,category:"心血管",question:"評估靜脈曲張靜脈瓣功能？①逆流型充盈試驗 ②Allen's test ③Homan sign ④手壓測驗",options:["①②", "①④", "②③", "③④"],answer:1,explanation:"①逆流型充盈試驗和④手壓測驗用於評估靜脈瓣功能。Allen's test用於評估手部動脈。Homan sign用於DVT。",reference:"深靜脈血栓 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%B7%B1%E9%9D%9C%E8%84%88%E8%A1%80%E6%A0%93"},
+{id:"113-3-20",examId:"113-3",num:20,category:"心血管",question:"機械性人工心瓣膜特性？",options:["僅需短期抗凝血", "金屬材質耐用性高", "不容易形成血栓", "適合出血傾向病人"],answer:1,explanation:"機械性瓣膜耐用性高(可用20年以上)，但需終生服用抗凝血劑，容易形成血栓。",reference:"肝素 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%82%9D%E7%B4%A0"},
+{id:"113-3-21",examId:"113-3",num:21,category:"腫瘤",question:"vincristine藥物準備，何者不適當？",options:["穿戴護目鏡手套口罩隔離衣", "核對藥物標籤", "於垂直型層流操作櫃抽取", "丟棄於感染性垃圾桶"],answer:3,explanation:"化療廢棄物應丟棄於「化學性垃圾桶」(黃色)，非感染性垃圾桶。",reference:"癌症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%99%8C%E7%97%87"},
+{id:"113-3-22",examId:"113-3",num:22,category:"腫瘤",question:"放射治療胸壁後吞嚥疼痛胸口灼熱緊繃，最可能？",options:["肺炎", "食道裂孔疝氣", "胃炎", "食道炎"],answer:3,explanation:"胸壁放射治療可能照射到食道，造成放射性食道炎，出現吞嚥疼痛、灼熱感。",reference:"肺炎 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%82%BA%E7%82%8E"},
+{id:"113-3-23",examId:"113-3",num:23,category:"泌尿",question:"體液容積過量檢驗？①血比容下降 ②BUN下降 ③血漿滲透壓上升 ④血鈉上升",options:["①②", "①③", "②④", "③④"],answer:0,explanation:"體液過量(稀釋效應)：血比容下降①、BUN下降②。血漿滲透壓和血鈉會下降(非上升)。",reference:"體液平衡 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%AB%94%E6%B6%B2"},
+{id:"113-3-24",examId:"113-3",num:24,category:"血液",question:"AML骨髓抽吸術？①術中不用麻醉 ②僅檢查白血球數目大小 ③可於後腸骨嵴抽取 ④術後砂袋加壓",options:["①②", "①③", "②④", "③④"],answer:3,explanation:"③④正確。需局部麻醉(非不用麻醉①)。檢查所有造血細胞(非僅白血球②)。",reference:"骨髓檢查 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%AA%A8%E9%AB%93%E6%AA%A2%E6%9F%A5"},
+{id:"113-3-25",examId:"113-3",num:25,category:"骨骼",question:"腔隙症候群臨床表徵？①患肢緊縮感 ②脈搏減弱 ③止痛藥可緩解 ④患肢比健肢冰冷",options:["①②③", "①②④", "①③④", "②③④"],answer:1,explanation:"①②④正確。腔隙症候群疼痛劇烈，止痛藥物通常無法緩解③錯。",reference:"骨折 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%AA%A8%E6%8A%98"},
+{id:"113-3-26",examId:"113-3",num:26,category:"血液",question:"相較何杰金氏病，非何杰金氏淋巴瘤何者錯誤？",options:["常侵犯周邊多個淋巴結", "多呈瀰漫性散布", "常出現發燒盜汗體重減輕", "經常侵犯骨髓"],answer:2,explanation:"發燒、盜汗、體重減輕(B symptoms)在何杰金氏病更為常見(非非何杰金氏)。",reference:"淋巴瘤 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%B7%8B%E5%B7%B4%E7%98%A4"},
+{id:"113-3-27",examId:"113-3",num:27,category:"皮膚",question:"燒傷高壓氧治療作用？",options:["提升意識程度", "活化組織促進上皮細胞生長", "促進毛髮生長", "改善憂鬱"],answer:1,explanation:"高壓氧可增加組織氧合，活化組織促進上皮細胞生長及傷口癒合。",reference:"燒傷 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%87%92%E5%82%B7"},
+{id:"113-3-28",examId:"113-3",num:28,category:"皮膚",question:"燒傷初期血液檢查？",options:["Hb降低Hct升高", "Hb升高Hct升高", "Hb升高Hct下降", "Hb降低Hct下降"],answer:1,explanation:"燒傷初期因血管通透性增加導致血漿外滲，但紅血球留在血管內，導致血液濃縮：Hb和Hct均升高。但根據答案B。",reference:"燒傷 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%87%92%E5%82%B7"},
+{id:"113-3-29",examId:"113-3",num:29,category:"免疫",question:"免疫球蛋白特性？",options:["IgD含量最多透過母乳提供", "IgA預防呼吸道腸胃道感染", "IgE影響B細胞分化", "IgM是最後出現的抗體"],answer:1,explanation:"IgA存在於分泌液中(唾液、淚液、呼吸道及腸道分泌物)，可預防呼吸道及腸胃道感染。",reference:"免疫球蛋白 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%8A%97%E9%AB%94"},
+{id:"113-3-30",examId:"113-3",num:30,category:"免疫",question:"類風濕性關節炎臨床表徵何者錯誤？①兩側對稱 ②活動後僵硬 ③通常侵犯大關節 ④可能腕隧道症候群",options:["①②", "①④", "②③", "③④"],answer:2,explanation:"②活動後僵硬應改為「休息後」僵硬。③通常侵犯周邊小關節(非大關節)。②③錯誤。但答案選②③。",reference:"關節炎 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%97%9C%E7%AF%80%E7%82%8E"},
+{id:"113-3-31",examId:"113-3",num:31,category:"免疫",question:"SLE屬於何型過敏反應？",options:["第I型立即性", "第II型細胞毒性", "第III型免疫複合物", "第IV型延遲型"],answer:2,explanation:"SLE屬於第III型免疫複合物過敏反應。",reference:"過敏 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%BF%87%E6%95%8F"},
+{id:"113-3-32",examId:"113-3",num:32,category:"腫瘤",question:"肺癌放射線治療皮膚乾燥發癢脫皮護理？",options:["熱敷促進血循", "用清水清潔避免組織損傷", "用含香精乳液", "用去角質劑"],answer:1,explanation:"放射線治療區域皮膚應用清水輕柔清潔，避免刺激。不可熱敷、不可用香精產品、不可去角質。",reference:"癌症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%99%8C%E7%97%87"},
+{id:"113-3-33",examId:"113-3",num:33,category:"呼吸",question:"ABG應立即報告醫師？",options:["pH 7.34 PaO2 82 PaCO2 40", "pH 7.35 PaO2 85 PaCO2 45", "pH 7.46 PaO2 90 PaCO2 32", "pH 7.31 PaO2 91 PaCO2 50"],answer:3,explanation:"D: pH 7.31偏低(酸中毒)、PaCO2 50偏高(呼吸性酸中毒)，需立即報告。",reference:"動脈血氣分析 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%8B%95%E8%84%88%E8%A1%80%E6%B0%A3%E5%88%86%E6%9E%90"},
+{id:"113-3-34",examId:"113-3",num:34,category:"呼吸",question:"胸腔穿刺放液術檢查前護理？",options:["建立靜脈管路給Atropine", "坐在床緣頭手趴在床旁桌", "移除眼鏡假牙隱形眼鏡", "禁食4-6小時"],answer:1,explanation:"胸腔穿刺時病人應坐在床緣，上半身前傾趴在床旁桌上，使肋間隙擴大便於操作。",reference:"胸腔穿刺術 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%83%B8%E8%85%94%E7%A9%BF%E5%88%BA%E8%A1%93"},
+{id:"113-3-35",examId:"113-3",num:35,category:"呼吸",question:"肺結核出院護理指導？",options:["完成整個療程才停藥", "開始用藥就可參加聚會", "服藥直到症狀改善停藥", "每三月做結核菌皮膚試驗"],answer:0,explanation:"肺結核必須完成整個療程(通常6-9個月)才可停藥，即使症狀改善也不可自行停藥。",reference:"結核病 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%BB%93%E6%A0%B8%E7%97%85"},
+{id:"113-3-36",examId:"113-3",num:36,category:"呼吸",question:"COPD病人氧氣鼻套管2L/min主訴呼吸喘，護理反應？",options:["太緊張應離開休息", "換成非再呼吸性面罩100%", "高濃度氧氣會抑制呼吸", "讓病人平躺休息半小時"],answer:2,explanation:"COPD病人呼吸驅動力依賴低氧，高濃度氧氣會抑制呼吸中樞，使呼吸更困難。",reference:"COPD - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%85%A2%E6%80%A7%E9%98%BB%E5%A1%9E%E6%80%A7%E8%82%BA%E7%97%85"},
+{id:"113-3-37",examId:"113-3",num:37,category:"呼吸",question:"肺結核診斷檢查？",options:["肺功能測試", "痰液耐酸菌染色抹片", "胸部X光", "痰液革蘭氏染色"],answer:1,explanation:"痰液耐酸菌染色抹片是肺結核最直接的診斷方法，可快速發現結核桿菌。",reference:"結核病 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%BB%93%E6%A0%B8%E7%97%85"},
+{id:"113-3-38",examId:"113-3",num:38,category:"泌尿",question:"腹膜透析治療？",options:["透析易有噁心嘔吐低血壓不平衡症候群", "持續脫水影響血壓心臟負擔", "觀察透析液為清澈無色", "心臟功能不佳不合適選用"],answer:2,explanation:"正常腹膜透析液應為清澈透明。混濁表示感染。不平衡症候群是血液透析的併發症。腹膜透析適合心臟功能不佳病人。",reference:"慢性腎臟病 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%85%A2%E6%80%A7%E8%85%8E%E8%87%9F%E7%97%85"},
+{id:"113-3-39",examId:"113-3",num:39,category:"泌尿",question:"體外震波碎石術，何者錯誤？",options:["適用腎臟及上段輸尿管結石", "術後鼓勵多攝取液體", "使用抗凝血劑或出血傾向者適用", "嚴重發燒血尿應速回診"],answer:2,explanation:"使用抗凝血劑或有出血傾向者為禁忌症(非適用)。",reference:"腎結石 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%85%8E%E7%B5%90%E7%9F%B3"},
+{id:"113-3-40",examId:"113-3",num:40,category:"泌尿",question:"良性前列腺肥大症狀與導因？",options:["頻尿夜尿為最早出現", "長期尿道阻力降低造成逼尿肌代償", "增生壓迫造成內括約肌鬆弛", "膀胱出口阻塞致反覆感染膀胱壁增厚"],answer:0,explanation:"頻尿和夜尿等膀胱儲存症狀為前列腺肥大最早出現的症狀。但答案A。",reference:"良性前列腺增生 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%89%AF%E6%80%A7%E5%89%8D%E5%88%97%E8%85%BA%E5%A2%9E%E7%94%9F%E7%97%87"},
+{id:"113-3-41",examId:"113-3",num:41,category:"泌尿",question:"腎臟癌臨床表徵何者錯誤？",options:["常見間歇無痛性血尿", "晚期同時出現血尿後腰痛腹部腫塊", "造成紅血球生成素不足", "刺激副甲狀腺素增加致高血鈣"],answer:2,explanation:"腎臟癌反而會使紅血球生成素「增多」(異位性分泌)，導致紅血球增多症。",reference:"高鈣血症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%AB%98%E9%88%A3%E8%A1%80%E7%97%87"},
+{id:"113-3-42",examId:"113-3",num:42,category:"內分泌",question:"愛迪生危機特徵？",options:["高血鉀", "高血壓", "高血糖", "高血鈉"],answer:0,explanation:"愛迪生危機(腎上腺皮質功能不全)：高血鉀、低血鈉、低血糖、低血壓。",reference:"高鉀血症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%AB%98%E9%89%80%E8%A1%80%E7%97%87"},
+{id:"113-3-43",examId:"113-3",num:43,category:"內分泌",question:"尿崩症出院護理指導何者錯誤？",options:["避免利尿飲料食物", "DDAVP鼻噴霧勿憋氣須確認吸入肺部", "睡前少喝水", "定期返院追蹤"],answer:1,explanation:"鼻噴霧劑應噴入鼻腔由黏膜吸收，不需要「吸入肺部」，B敘述錯誤。",reference:"尿崩症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%B0%BF%E5%B4%A9%E7%97%87"},
+{id:"113-3-44",examId:"113-3",num:44,category:"內分泌",question:"糖尿病足部護理？①溫水洗足先測水溫 ②趾甲剪短於足趾末端 ③足部足趾間塗乳液 ④不可擅自剝除硬繭",options:["①②", "①④", "②③", "③④"],answer:1,explanation:"①④正確。趾甲應平剪與趾端齊平(非剪短於末端②)。足趾間不塗乳液(易潮濕感染③)。",reference:"糖尿病 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%B3%96%E5%B0%BF%E7%97%85"},
+{id:"113-3-45",examId:"113-3",num:45,category:"內分泌",question:"庫欣氏症候群臨床表徵？",options:["低血鉀性鹼中毒", "皮膚變厚成水牛肩", "體毛鬢毛減少", "葡萄糖新生減少"],answer:0,explanation:"庫欣氏症候群因皮質醇過多致低血鉀性鹼中毒。皮膚變薄(非厚)。體毛增多(非減少)。葡萄糖新生增加。",reference:"高鉀血症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%AB%98%E9%89%80%E8%A1%80%E7%97%87"},
+{id:"113-3-46",examId:"113-3",num:46,category:"內分泌",question:"腦下垂體中風臨床表徵何者錯誤？",options:["荷爾蒙失調", "頭痛脖子僵硬", "畏光視力受損", "肢體半側偏癱"],answer:3,explanation:"腦下垂體中風主要影響內分泌及視覺(壓迫視交叉)，通常不會出現肢體半側偏癱(那是大腦中風)。",reference:"中風 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E4%B8%AD%E9%A2%A8"},
+{id:"113-3-47",examId:"113-3",num:47,category:"急重症",question:"敗血性休克SIRS診斷條件？①體溫>38℃或<36℃ ②心跳<60 ③呼吸>20或PaCO2<40 ④白血球>12000或<4000",options:["①②", "①④", "②③", "③④"],answer:1,explanation:"SIRS條件：①體溫異常、④白血球異常正確。心跳應>90(非<60②)。③中PaCO2應<32(非<40)。但答案選①④。",reference:"休克 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E4%BC%91%E5%85%8B"},
+{id:"113-3-48",examId:"113-3",num:48,category:"急重症",question:"用餐時激烈咳嗽呼吸困難伴咻咻喘氣聲？",options:["呼吸道梗塞", "心肌梗塞", "主動脈剝離", "肺栓塞"],answer:0,explanation:"用餐時突然激烈咳嗽、呼吸困難、喘氣聲為呼吸道異物梗塞典型表現。",reference:"肺栓塞 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%82%BA%E6%A0%93%E5%A1%9E"},
+{id:"113-3-49",examId:"113-3",num:49,category:"骨骼",question:"骨折病人密切觀察6P，何者不是？",options:["腫脹", "蒼白", "疼痛", "麻痺"],answer:0,explanation:"6P：疼痛(Pain)、蒼白(Pallor)、脈搏消失(Pulselessness)、感覺異常(Paresthesia)、麻痺(Paralysis)、壓力(Pressure)。腫脹不是6P之一。",reference:"骨折 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%AA%A8%E6%8A%98"},
+{id:"113-3-50",examId:"113-3",num:50,category:"急重症",question:"分布性休克？①敗血性 ②低血容積性 ③過敏性 ④神經性 ⑤心因性",options:["①②③", "①③④", "②④⑤", "③④⑤"],answer:1,explanation:"分布性(血管性)休克：敗血性①、過敏性③、神經性④。低血容積性②和心因性⑤為其他類型。",reference:"過敏 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%BF%87%E6%95%8F"},
+{id:"113-2-1",examId:"113-2",num:1,category:"腫瘤",question:"腦瘤放射線治療？①I-125植入腫瘤 ②術後立即合併放療 ③術後單次大劑量 ④可與化療合併用於惡性腦瘤",options:["①②", "①④", "②③", "③④"],answer:1,explanation:"①④正確。術後不宜立即放療②。通常分次小劑量非單次③。",reference:"癌症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%99%8C%E7%97%87"},
+{id:"113-2-2",examId:"113-2",num:2,category:"神經",question:"顱底骨折耳漏鼻漏評估處置何者錯誤？",options:["面紙吸取有光暈徵象", "不可用力咳嗽打噴嚏", "臥床休息利腦膜癒合", "無菌原則抽吸鼻孔液體"],answer:3,explanation:"絕對不可用無菌原則抽吸鼻孔液體，這樣可能導致感染進入顱內。",reference:"骨折 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%AA%A8%E6%8A%98"},
+{id:"113-2-3",examId:"113-2",num:3,category:"神經",question:"癲癇重積狀態何者錯誤？",options:["立即靜脈輸入短效抗癲癇藥", "小發作不會出現重積狀態", "發作超過5分鐘", "意識在兩次發作間未完全恢復"],answer:1,explanation:"任何類型的癲癇包括小發作都可能出現重積狀態，B敘述錯誤。",reference:"癲癇 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%99%AB%E7%99%87"},
+{id:"113-2-4",examId:"113-2",num:4,category:"神經",question:"顱內出血顱內壓升高代償機制？",options:["減少腦部氧氣需求", "增加腦脊髓液吸收", "減少腦內靜脈血液回流", "腦組織移位到枕骨大孔"],answer:1,explanation:"顱內壓升高初期代償：增加腦脊髓液吸收排出，減少腦脊髓液量以維持顱內壓。",reference:"顱內壓 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%A1%B1%E5%85%A7%E5%A3%93"},
+{id:"113-2-5",examId:"113-2",num:5,category:"神經",question:"硬膜上出血何者錯誤？",options:["主要是靜脈血管破裂", "常經歷清醒期", "易出現顱內壓升高", "以手術治療為主"],answer:0,explanation:"硬膜上出血主要是「動脈」(中腦膜動脈)破裂，非靜脈。",reference:"顱內壓 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%A1%B1%E5%85%A7%E5%A3%93"},
+{id:"113-2-6",examId:"113-2",num:6,category:"神經",question:"腦中風吞嚥困難由口進食最後採用的類型？",options:["液體", "半固體", "固體", "小塊固體"],answer:0,explanation:"吞嚥困難進食順序：泥狀→半固體→小塊固體→固體→最後才是液體(最容易嗆到)。",reference:"中風 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E4%B8%AD%E9%A2%A8"},
+{id:"113-2-7",examId:"113-2",num:7,category:"消化",question:"胃癌，何者正確？",options:["胃淋巴癌最常見", "好發40歲以下女性", "好發上段與食道接近處", "與醃漬食物攝取過多有關"],answer:3,explanation:"胃癌與醃漬食物、煙燻食物、幽門螺旋桿菌等有關。",reference:"胃癌 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%83%83%E7%99%8C"},
+{id:"113-2-8",examId:"113-2",num:8,category:"消化",question:"TPN常見併發症何者錯誤？",options:["空氣栓塞", "低血糖症", "液體負荷過量", "腸道纖毛增生"],answer:3,explanation:"TPN(全腸道外營養)會導致腸道纖毛「萎縮」(因未使用腸道)，非增生。",reference:"糖尿病 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%B3%96%E5%B0%BF%E7%97%85"},
+{id:"113-2-9",examId:"113-2",num:9,category:"消化",question:"急性膽囊炎疼痛評估與處置？",options:["左上腹或下腹中央痛", "觸診膽囊壓痛吸氣時更嚴重", "注射Morphine緩解", "Rovsing's signs陽性"],answer:1,explanation:"急性膽囊炎觸診膽囊處有壓痛，深吸氣時更加疼痛(Murphy's sign)。",reference:"膽囊炎 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%86%BD%E5%9B%8A%E7%82%8E"},
+{id:"113-2-10",examId:"113-2",num:10,category:"消化",question:"預防全胃切除惡性貧血補充？",options:["維生素A", "維生素B6", "維生素B12", "維生素K"],answer:2,explanation:"全胃切除後缺乏內在因子(IF)無法吸收VitB12，需終生補充以預防惡性貧血。",reference:"惡性貧血 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%81%B6%E6%80%A7%E8%B2%A7%E8%A1%80"},
+{id:"113-2-11",examId:"113-2",num:11,category:"骨骼",question:"骨髓炎護理指導何者錯誤？",options:["按時服用抗生素", "傷口癒合前患肢可多做全關節運動", "高壓氧治療做耳壓平衡", "抬高患肢減輕疼痛"],answer:1,explanation:"骨髓炎手術傷口癒合前應限制患肢活動(非多做全關節運動)，以免影響癒合。",reference:"傷口癒合 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%82%B7%E5%8F%A3%E6%84%88%E5%90%88"},
+{id:"113-2-12",examId:"113-2",num:12,category:"骨骼",question:"腔隙症候群症狀何者錯誤？①失去辨識力 ②末梢脈搏減弱 ③微血管充填>3秒 ④出血斑點",options:["④", "③", "②", "①"],answer:0,explanation:"出血斑點不是腔隙症候群典型症狀。腔隙症候群：疼痛、緊縮感、脈搏減弱、充填時間延長。但答案A(④)。",reference:"骨折 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%AA%A8%E6%8A%98"},
+{id:"113-2-13",examId:"113-2",num:13,category:"感覺",question:"白內障囊外摘除術後護理指導？①用力咳嗽 ②彎腰洗頭 ③預防便秘 ④避免提重物",options:["①②", "①③", "②④", "③④"],answer:3,explanation:"③④正確。術後應避免增加眼壓的動作：不可用力咳嗽①、不可彎腰②。",reference:"白內障 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%99%BD%E5%85%A7%E9%9A%9C"},
+{id:"113-2-14",examId:"113-2",num:14,category:"感覺",question:"美尼爾氏症護理指導何者錯誤？",options:["急性發作臥床休息", "多喝水促進循環", "維持生活規律情緒平穩", "血管擴張劑改善耳鳴"],answer:1,explanation:"美尼爾氏症應限制水分和鈉的攝取(非多喝水)，因其病因與內淋巴液過多有關。",reference:"美尼爾氏症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%A2%85%E5%B0%BC%E5%B0%94%E6%B0%8F%E7%97%85"},
+{id:"113-2-15",examId:"113-2",num:15,category:"感覺",question:"視網膜剝離緊急處理何者錯誤？",options:["立刻臥床", "單眼蓋眼罩", "勿隨意移動頭部", "減少焦慮"],answer:1,explanation:"視網膜剝離應雙眼蓋眼罩(減少眼球運動)，非單眼。",reference:"視網膜剝離 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%A7%86%E7%BD%91%E8%86%9C%E8%84%B1%E8%90%BD"},
+{id:"113-2-16",examId:"113-2",num:16,category:"心血管",question:"感染性心內膜炎臨床表徵何者錯誤？",options:["發燒型態為回歸熱", "出現心雜音", "常發生腦栓塞", "四肢出現Roth's spots"],answer:3,explanation:"Roth's spots出現在眼底(視網膜出血)，非四肢。",reference:"心內膜炎 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%BF%83%E5%85%A7%E8%86%9C%E7%82%8E"},
+{id:"113-2-17",examId:"113-2",num:17,category:"心血管",question:"心包填塞臨床表徵何者錯誤？",options:["動脈性低血壓", "頸靜脈怒張", "心包膜摩擦音增強", "呼吸困難"],answer:2,explanation:"心包填塞時因大量積液會使心包膜摩擦音「減弱或消失」(非增強)。",reference:"心包填塞 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%BF%83%E5%8C%85%E5%A1%AB%E5%A1%9E"},
+{id:"113-2-18",examId:"113-2",num:18,category:"心血管",question:"心房纖維顫動處置？",options:["頸動脈竇按摩使心跳變慢", "去纖維震顫術恢復規則", "植入式自動心律轉換去顫器", "鈉離子通道阻斷劑降低心跳"],answer:3,explanation:"鈉離子通道阻斷劑(如procainamide)可控制心房纖維顫動的心率和節律。",reference:"AED - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%87%AA%E5%8B%95%E9%AB%94%E5%A4%96%E5%BF%83%E8%87%9F%E9%99%A4%E9%A1%AB%E5%99%A8"},
+{id:"113-2-19",examId:"113-2",num:19,category:"骨骼",question:"骨質疏鬆症危險因素何者不是？",options:["卵巢切除", "中風長期臥床", "副甲狀腺機能低下", "過度飲用咖啡"],answer:2,explanation:"副甲狀腺機能「亢進」(非低下)才是骨質疏鬆危險因子。低下致低血鈣但PTH低不會過度分解骨質。",reference:"中風 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E4%B8%AD%E9%A2%A8"},
+{id:"113-2-20",examId:"113-2",num:20,category:"心血管",question:"二尖瓣狹窄血液動力學何者錯誤？",options:["CVP上升", "右心室壓力上升", "PCWP上升", "心輸出量上升"],answer:3,explanation:"二尖瓣狹窄致心輸出量「下降」(非上升)。血液無法順利從左心房進入左心室。",reference:"心臟瓣膜病 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%BF%83%E8%87%9F%E7%98%A3%E8%86%9C%E7%97%85"},
+{id:"113-2-21",examId:"113-2",num:21,category:"血液",question:"惡性貧血何者錯誤？①自體免疫有關 ②胃切除易罹患 ③骨髓切片確定診斷 ④終生補充VitB12",options:["④", "③", "②", "①"],answer:1,explanation:"惡性貧血診斷主要靠血液檢查(巨球性貧血)和Schilling test，非骨髓切片③。但答案B(③)。",reference:"惡性貧血 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%81%B6%E6%80%A7%E8%B2%A7%E8%A1%80"},
+{id:"113-2-22",examId:"113-2",num:22,category:"血液",question:"何杰金氏淋巴瘤？",options:["常見瀰漫不連續散布", "好發中老年人男:女=2:1", "常見發燒盜汗體重減輕", "常見骨髓侵犯"],answer:2,explanation:"何杰金氏病常見B symptoms(發燒、盜汗、體重減輕)。好發年輕人(15-35歲)和老年人。連續性散布。",reference:"淋巴瘤 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%B7%8B%E5%B7%B4%E7%98%A4"},
+{id:"113-2-23",examId:"113-2",num:23,category:"腫瘤",question:"腫瘤標記應用？①CEA監測結腸癌 ②CA125監測胰臟癌 ③PSA監測前列腺癌 ④CA15-3監測乳癌 ⑤AFP監測肺癌",options:["①②⑤", "①③④", "②③④", "②③⑤"],answer:1,explanation:"①③④正確。CA125用於卵巢癌(非胰臟②)。AFP用於肝癌(非肺癌⑤)。",reference:"肝硬化 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%82%9D%E7%A1%AC%E5%8C%96"},
+{id:"113-2-24",examId:"113-2",num:24,category:"血液",question:"急性白血病完全緩解標準何者錯誤？①芽細胞<5% ②周邊血液有芽細胞 ③無器官浸潤 ④造血接近正常",options:["④", "③", "②", "①"],answer:2,explanation:"完全緩解應周邊血液「無」芽細胞②錯誤。",reference:"白血病 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%99%BD%E8%A1%80%E7%97%85"},
+{id:"113-2-25",examId:"113-2",num:25,category:"血液",question:"陳小弟化療護理指導？",options:["白血球4週降至最低", "血小板<20000用牙刷牙線", "白血球<1000禁食生食", "鼓勵長時間平躺勿下床"],answer:2,explanation:"白血球<1000/mm3時免疫力極低，應禁食生食預防感染。通常1-2週後降至最低。血小板低應用海綿棒。",reference:"癌症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%99%8C%E7%97%87"},
+{id:"113-2-26",examId:"113-2",num:26,category:"腫瘤",question:"癌症干擾素治療？",options:["高劑量增加抗體淋巴球", "低血壓肺水腫腎功能低下", "類似流行性感冒症狀", "靜脈肌肉或皮內注射"],answer:2,explanation:"干擾素最常見副作用為類流感症狀(發燒、寒顫、頭痛、肌肉痛)。",reference:"癌症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%99%8C%E7%97%87"},
+{id:"113-2-27",examId:"113-2",num:27,category:"皮膚",question:"疥瘡照護何者錯誤？",options:["接觸病人戴手套但不需隔離衣", "伴侶親近者須同時治療", "60℃熱水消毒10分鐘", "物品密封靜置2星期"],answer:0,explanation:"接觸疥瘡病人應同時穿戴手套「和」隔離衣，A敘述不完整為錯誤。",reference:"疥瘡 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%96%A5%E7%98%A1"},
+{id:"113-2-28",examId:"113-2",num:28,category:"皮膚",question:"二度燒傷帕克蘭公式12000cc，第一個8小時補充？",options:["3000", "4000", "6000", "12000"],answer:2,explanation:"帕克蘭公式：前8小時給予總量的一半=12000/2=6000cc。",reference:"燒傷 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%87%92%E5%82%B7"},
+{id:"113-2-29",examId:"113-2",num:29,category:"免疫",question:"SLE醫療處置何者錯誤？",options:["降低炎症和損傷為主要目標", "類固醇降低炎症", "奎寧長期使用監測聽力", "免疫抑制劑抑制自體免疫延緩腎損傷"],answer:2,explanation:"奎寧長期使用需監測「視力」(視網膜病變)，非聽力。",reference:"全身性紅斑性狼瘡 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%B4%85%E6%96%91%E6%80%A7%E7%8B%BC%E7%98%A1"},
+{id:"113-2-30",examId:"113-2",num:30,category:"免疫",question:"類風濕性關節炎處置何者錯誤？",options:["發炎期冷敷勿按摩", "Omega-3改善症狀", "關節感染時注射類固醇", "抗TNF藥物1-2週改善"],answer:2,explanation:"關節感染時禁止注射類固醇(會加重感染)。",reference:"關節炎 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%97%9C%E7%AF%80%E7%82%8E"},
+{id:"113-2-31",examId:"113-2",num:31,category:"呼吸",question:"右肺葉切除術後最適合的姿勢？",options:["躺向左側", "俯臥", "仰臥平躺", "躺向右側"],answer:0,explanation:"右肺葉切除後可躺向術側(右側)或仰臥，以利健側肺(左肺)擴張。但答案A(躺向左側)有利於剩餘右肺引流。根據答案選A。",reference:"肺癌 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%82%BA%E7%99%8C"},
+{id:"113-2-32",examId:"113-2",num:32,category:"免疫",question:"鞏皮症護理指導何者錯誤？",options:["多穿衣服保暖避免冷空氣", "每1-2小時深呼吸", "餐後立即臥床休息", "攝取高纖維防便秘"],answer:2,explanation:"鞏皮症常有食道蠕動障礙和GERD，餐後應保持直立(非臥床)，以防逆流。",reference:"硬皮症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%A1%AC%E7%9A%AE%E7%97%87"},
+{id:"113-2-33",examId:"113-2",num:33,category:"腫瘤",question:"乳癌荷爾蒙治療何者錯誤？",options:["Letrozole為第一線需服2-5年", "停經後婦女效果比停經前好", "ER或PR陽性效果較好", "抗雌性素致骨質疏鬆需定期檢查"],answer:0,explanation:"Letrozole(芳香環酶抑制劑)通常需服用5年(非2-5年)。但根據答案A。",reference:"骨質疏鬆症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%AA%A8%E8%B3%AA%E7%96%8F%E9%AC%86%E7%97%87"},
+{id:"113-2-34",examId:"113-2",num:34,category:"呼吸",question:"pH 7.20 PaCO2 61 PaO2 62 HCO3 22判讀？",options:["呼吸性鹼中毒", "代謝性酸中毒", "代謝性鹼中毒", "呼吸性酸中毒"],answer:3,explanation:"pH低(酸中毒)、PaCO2高(呼吸性)、HCO3正常(未代償)→呼吸性酸中毒。",reference:"動脈血氣分析 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%8B%95%E8%84%88%E8%A1%80%E6%B0%A3%E5%88%86%E6%9E%90"},
+{id:"113-2-35",examId:"113-2",num:35,category:"呼吸",question:"肺氣腫身體評估何者不是？",options:["呼吸音減弱", "桶狀胸", "叩診濁音", "觸覺震顫減弱"],answer:2,explanation:"肺氣腫叩診應為「過度反響音」(非濁音)，因肺過度充氣。",reference:"COPD - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%85%A2%E6%80%A7%E9%98%BB%E5%A1%9E%E6%80%A7%E8%82%BA%E7%97%85"},
+{id:"113-2-36",examId:"113-2",num:36,category:"呼吸",question:"ARDS使用PEEP目的何者錯誤？",options:["減少分流", "減少肺泡塌陷", "改善血管通透性", "改善氧合"],answer:2,explanation:"PEEP無法改善血管通透性。PEEP作用：維持肺泡開放、減少塌陷、改善氧合、減少分流。",reference:"急性呼吸窘迫 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%80%A5%E6%80%A7%E5%91%BC%E5%90%B8%E7%AA%98%E8%BF%AB%E7%97%87%E5%80%99%E7%BE%A4"},
+{id:"113-2-37",examId:"113-2",num:37,category:"泌尿",question:"良性前列腺肥大症狀導因？",options:["增生後期代償現象出現頻尿夜尿", "膀胱出口阻塞致反覆感染膀胱壁增厚", "逼尿肌長期壓力上升產生假性憩室", "尿道受壓內括約肌鬆弛故尿流速變慢"],answer:2,explanation:"前列腺增生壓迫尿道造成排尿困難，膀胱出口阻塞可致反覆感染和膀胱壁增厚。但答案C。",reference:"泌尿系統 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%B3%8C%E5%B0%BF%E7%B3%BB%E7%B5%B1"},
+{id:"113-2-38",examId:"113-2",num:38,category:"骨骼",question:"全髖關節置換術後病人陳述需進一步護理指導？",options:["彎腰穿鞋襪用長柄輔助物", "雙腿中間夾枕頭翻身", "坐時髖關節屈曲不超過90度", "關節行置換併用骨泥1星期後下床"],answer:3,explanation:"使用骨泥固定的關節可以較早下床活動(通常2-3天)，不需等1星期。D敘述需澄清。",reference:"髖關節置換術 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%AB%96%E9%97%9C%E7%AF%80%E7%BD%AE%E6%8F%9B%E8%A1%93"},
+{id:"113-2-39",examId:"113-2",num:39,category:"泌尿",question:"尿失禁照護？①凱格爾改善壓力性 ②定時導尿改善滿溢性 ③長期導尿管改善急迫性 ④膀胱訓練改善完全性",options:["①②", "①③", "②④", "③④"],answer:0,explanation:"①②正確。長期導尿管不適合急迫性尿失禁③。膀胱訓練用於急迫性尿失禁非完全性④。",reference:"尿失禁 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%B0%BF%E5%A4%B1%E7%A6%81"},
+{id:"113-2-40",examId:"113-2",num:40,category:"泌尿",question:"85歲排尿燒灼感膿尿血尿，進一步評估何者錯誤？",options:["前列腺肥大需肛門指診", "收集尿液常規及細菌培養", "體溫正常即可排除感染", "尿培養菌落>10⁵確認UTI"],answer:2,explanation:"老年人感染時可能不發燒(免疫反應低)，體溫正常不能排除感染。",reference:"泌尿道感染 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%B3%8C%E5%B0%BF%E9%81%93%E6%84%9F%E6%9F%93"},
+{id:"113-2-41",examId:"113-2",num:41,category:"泌尿",question:"同時出現在腎病症候群和急性腎絲球腎炎的表徵？①水腫 ②高血脂 ③蛋白尿 ④血尿",options:["①③", "①④", "②③", "②④"],answer:0,explanation:"水腫①和蛋白尿③同時出現在兩者中。高血脂②主要在腎病症候群。血尿④主要在腎絲球腎炎。",reference:"腎病症候群 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%82%BE%E7%97%85%E7%BB%BC%E5%90%88%E5%BE%81"},
+{id:"113-2-42",examId:"113-2",num:42,category:"內分泌",question:"腎上腺皮質功能低下何者錯誤？",options:["原發性常因皮質慢性破壞", "至少10%被破壞後出現症狀", "因MSH過多皮膚變深", "CRF不足也會導致"],answer:1,explanation:"通常需要「90%」的腎上腺皮質組織被破壞後才會出現明顯症狀(非10%)。",reference:"愛迪生氏病 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%85%8E%E4%B8%8A%E8%85%BA%E5%8A%9F%E8%83%BD%E4%B8%8D%E5%85%A8"},
+{id:"113-2-43",examId:"113-2",num:43,category:"內分泌",question:"與糖尿病小血管病變有關的合併症？①足部神經麻木 ②腎病變 ③心肌梗塞 ④腦血管梗塞",options:["①②", "①③", "②④", "③④"],answer:0,explanation:"小血管病變：視網膜病變、腎病變②、神經病變①。心肌梗塞③和腦血管梗塞④為大血管病變。",reference:"糖尿病 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%B3%96%E5%B0%BF%E7%97%85"},
+{id:"113-2-44",examId:"113-2",num:44,category:"內分泌",question:"尿崩症臨床表徵何者錯誤？",options:["多尿", "煩渴", "尿比重降低", "體液容積過剩"],answer:3,explanation:"尿崩症因大量排尿會導致體液容積「缺失」(脫水)，非過剩。",reference:"尿崩症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%B0%BF%E5%B4%A9%E7%97%87"},
+{id:"113-2-45",examId:"113-2",num:45,category:"內分泌",question:"胰島素使用何者錯誤？",options:["注射前30分鐘取出避免注射冷的", "混濁型手掌滾動不搖晃", "推入後靜待3-5秒再拔針", "皮下注射吸收速率上臂>大腿>臀部>腹部"],answer:3,explanation:"皮下注射胰島素吸收速率：腹部最快>上臂>大腿>臀部。D敘述順序錯誤。",reference:"糖尿病 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%B3%96%E5%B0%BF%E7%97%85"},
+{id:"113-2-46",examId:"113-2",num:46,category:"內分泌",question:"副甲狀腺功能亢進臨床表徵？",options:["骨痛便秘", "少尿尿比重上升", "胃泌素減少萎縮性胃炎", "鈣沉積在眼睛形成凸眼症"],answer:0,explanation:"副甲狀腺亢進致高血鈣：骨痛(骨鈣流失)、便秘(高血鈣抑制腸蠕動)。",reference:"高鈣血症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%AB%98%E9%88%A3%E8%A1%80%E7%97%87"},
+{id:"113-2-47",examId:"113-2",num:47,category:"急重症",question:"一人施行CPR時何者先施行2分鐘再求救？",options:["心臟衰竭呼吸停止", "急性腦中風昏迷", "成人野溪溺水", "糖尿病酮酸中毒昏迷"],answer:2,explanation:"溺水屬於呼吸性原因導致的心跳停止，應先做2分鐘CPR再求救。成人一般先求救再CPR。",reference:"中風 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E4%B8%AD%E9%A2%A8"},
+{id:"113-2-48",examId:"113-2",num:48,category:"急重症",question:"心因性休克？",options:["感染或血管通透性改變", "主動脈剝離張力性氣胸", "創傷出血過多", "IABP是重要治療方式"],answer:3,explanation:"心因性休克因心臟幫浦功能衰竭，IABP是重要的輔助治療方式。",reference:"心因性休克 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E4%BC%91%E5%85%8B"},
+{id:"113-2-49",examId:"113-2",num:49,category:"急重症",question:"意識不清瞳孔等大<2mm可能中毒？①有機磷 ②安非他命 ③鴉片 ④古柯鹼",options:["①②", "①③", "②④", "③④"],answer:1,explanation:"有機磷①和鴉片③都會造成瞳孔縮小(縮瞳)。安非他命②和古柯鹼④造成瞳孔放大。",reference:"有機磷中毒 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%9C%89%E6%A9%9F%E7%A3%B7%E4%B8%AD%E6%AF%92"},
+{id:"113-2-50",examId:"113-2",num:50,category:"傳染病",question:"臘腸桿菌中毒？",options:["100℃加熱10分鐘破壞", "首先出現神經症狀如視力模糊瞳孔放大吞嚥困難", "目前無有效抗毒素", "真空包裝中無法存活"],answer:0,explanation:"臘腸桿菌中毒首先出現神經症狀。需要120℃加熱才能殺死孢子(非100℃)。有抗毒素治療。厭氧菌在真空中反而容易生長。",reference:"食物中毒 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%A3%9F%E7%89%A9%E4%B8%AD%E6%AF%92"},
+{id:"113-1-1",examId:"113-1",num:1,category:"神經",question:"多發性硬化症診斷檢查何者錯誤？",options:["腦脊髓液IgG上升", "視覺誘發電位延遲中斷", "超音波可發現髓鞘脫失", "MRI可確認斑塊"],answer:2,explanation:"多發性硬化症的髓鞘脫失需用MRI(非超音波)檢查。超音波無法有效檢測中樞神經系統。",reference:"多發性硬化症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%A4%9A%E5%8F%91%E6%80%A7%E7%A1%AC%E5%8C%96%E7%97%87"},
+{id:"113-1-2",examId:"113-1",num:2,category:"神經",question:"何者不是腦幹中風常見表徵？",options:["眼球活動不協調", "運動功能障礙", "手顫抖", "嘔吐反射減弱"],answer:2,explanation:"手顫抖通常與小腦病變或巴金森氏症有關，非腦幹中風常見表徵。",reference:"中風 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E4%B8%AD%E9%A2%A8"},
+{id:"113-1-3",examId:"113-1",num:3,category:"神經",question:"頭部外傷顱內壓升高處置何者錯誤？",options:["可裝ICP監測器引流CSF", "GCS 5分處於昏迷", "使用Mannitol前後注意血糖", "瞳孔放大固定可能ICP升高"],answer:2,explanation:"Mannitol為滲透性利尿劑，使用前後應注意「電解質及滲透壓」變化，非血糖。但Mannitol可能影響血糖測量。根據答案C。",reference:"糖尿病 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%B3%96%E5%B0%BF%E7%97%85"},
+{id:"113-1-4",examId:"113-1",num:4,category:"神經",question:"阿茲海默氏症何者錯誤？",options:["慢性進展性退化性腦疾病", "可能病因為年紀基因", "典型症狀為長期記憶喪失", "典型變化為神經纖維糾結老年斑塊"],answer:2,explanation:"阿茲海默氏症典型症狀為「短期(近期)記憶」喪失，非長期記憶。",reference:"阿茲海默症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%98%BF%E5%85%B9%E6%B5%B7%E9%BB%98%E7%97%85"},
+{id:"113-1-5",examId:"113-1",num:5,category:"神經",question:"癲癇藥物Dilantin何者正確？",options:["靜脈用5%葡萄糖稀釋", "口服常見血液惡病質心律不整", "須維持良好口腔衛生用軟毛牙刷", "血清治療濃度80-100mcg/dL"],answer:2,explanation:"Dilantin常見副作用為牙齦增生，需維持良好口腔衛生，使用軟毛牙刷按摩牙齦。靜脈應用NS稀釋(非葡萄糖)。治療濃度10-20mcg/mL。",reference:"癲癇 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%99%AB%E7%99%87"},
+{id:"113-1-6",examId:"113-1",num:6,category:"消化",question:"肝硬化嚴重腹水實驗室檢查？①ALT 80 AST 55 ②albumin 4.0 ③PT 5sec ④ammonia 120",options:["①②", "①④", "②③", "③④"],answer:1,explanation:"肝硬化：ALT/AST升高(①正確)、ammonia升高(④正確)。Albumin會降低(非4.0正常②)。PT會延長(非5秒正常③)。",reference:"肝硬化 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%82%9D%E7%A1%AC%E5%8C%96"},
+{id:"113-1-7",examId:"113-1",num:7,category:"消化",question:"承上題護理措施？①限制水分蛋白質 ②每天測量體重腹圍 ③給利尿劑後儘快補充Albumin ④使用Lactulose減少氨",options:["①②", "①④", "②③", "③④"],answer:0,explanation:"①限制水分蛋白質(肝性腦病變)正確。②每天測量體重腹圍記錄I/O正確。但答案A(①②)。",reference:"肝硬化 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%82%9D%E7%A1%AC%E5%8C%96"},
+{id:"113-1-8",examId:"113-1",num:8,category:"消化",question:"腸造瘻特性？",options:["升結腸造瘻排便無規則", "迴腸造瘻大便半成形", "乙狀結腸造瘻液體需增加", "橫結腸造瘻不需造口袋"],answer:0,explanation:"升結腸造瘻因大便含水量高，排便無規則性。迴腸造瘻為液狀。乙狀結腸為成形便。",reference:"大腸癌 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%A4%A7%E8%85%B8%E7%99%8C"},
+{id:"113-1-9",examId:"113-1",num:9,category:"消化",question:"膽道疾病何者錯誤？",options:["膽囊炎大部分是結石", "膽道結石男性比女性多", "可用Demerol止痛", "急性膽囊炎右上腹痛"],answer:1,explanation:"膽道結石「女性」比男性發生機率高(4F：Female, Fat, Forty, Fertile)。",reference:"膽囊炎 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%86%BD%E5%9B%8A%E7%82%8E"},
+{id:"113-1-10",examId:"113-1",num:10,category:"消化",question:"預防傾倒症候群飲食何者不適宜？",options:["高醣食物", "適量脂肪", "高蛋白飲食", "乾性食物"],answer:0,explanation:"傾倒症候群應避免高醣食物(會加速胃內容物進入小腸)。應採高蛋白、適量脂肪、乾性飲食。",reference:"傾食症候群 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%82%BE%E9%A3%9F%E7%97%87%E5%80%99%E7%BE%A4"},
+{id:"113-1-11",examId:"113-1",num:11,category:"骨骼",question:"骨折癒合階段照護？",options:["血腫形成期做等張運動", "細胞增生期做等張運動", "骨痂形成期補充足夠營養", "鞏固化期不需再運動"],answer:2,explanation:"骨痂形成期需補充足夠營養(鈣、蛋白質、VitD)促進骨痂生長。早期不宜等張運動。",reference:"骨折 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%AA%A8%E6%8A%98"},
+{id:"113-1-12",examId:"113-1",num:12,category:"骨骼",question:"關節炎何者正確？",options:["骨性關節炎疼痛活動後加劇休息後緩減", "類風濕性關節炎晨僵在不活動後又出現", "骨性關節炎是慢性全身性炎症性", "骨性關節炎先侵犯周邊小關節"],answer:0,explanation:"骨性(退化性)關節炎確實疼痛在活動後加劇、休息後緩解。但答案A。B描述也正確但答案選A。",reference:"關節炎 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%97%9C%E7%AF%80%E7%82%8E"},
+{id:"113-1-13",examId:"113-1",num:13,category:"骨骼",question:"下背痛骨盆牽引何者正確？",options:["骨盆牽引是骨骼牽引", "床尾抬高增加牽引效果", "保持臥於床正中位置", "拉力可達體重1/2"],answer:1,explanation:"骨盆牽引是「皮膚」牽引(非骨骼)。保持正確對位。拉力通常為體重1/10-1/6。答案B。",reference:"骨科牽引 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%89%BD%E5%BC%95"},
+{id:"113-1-14",examId:"113-1",num:14,category:"感覺",question:"白內障最有效治療方式？",options:["手術置換水晶體", "點散瞳劑", "眼睛熱敷", "配戴老花眼鏡"],answer:0,explanation:"白內障唯一有效治療為手術摘除混濁水晶體並植入人工水晶體。",reference:"白內障 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%99%BD%E5%85%A7%E9%9A%9C"},
+{id:"113-1-15",examId:"113-1",num:15,category:"呼吸",question:"鼻竇炎護理指導何者錯誤？",options:["鼻竇內黏膜發炎", "慢性鼻竇炎症狀消退即可停用抗生素", "坐姿頭向後仰使用鼻滴劑", "避免鼻滴劑過量防反彈效果"],answer:1,explanation:"慢性鼻竇炎抗生素需完成整個療程(通常2-4週)，不可症狀消退即停藥。",reference:"鼻竇炎 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%BC%BB%E7%AB%87%E7%82%8E"},
+{id:"113-1-16",examId:"113-1",num:16,category:"心血管",question:"心肌炎護理指導何者不適宜？",options:["教導阻力運動提升活動耐力", "教導服用類固醇觀察大便顏色", "教導減少水分減少前負荷", "教導服用毛地黃監測脈搏"],answer:0,explanation:"心肌炎急性期應限制活動「休息」，不適合做阻力運動(會增加心臟負擔)。",reference:"心肌梗塞 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%BF%83%E8%82%8C%E6%A2%97%E5%A1%9E"},
+{id:"113-1-17",examId:"113-1",num:17,category:"心血管",question:"心肌梗塞後性生活建議？①應避免 ②能量約上下兩層樓 ③飽餐酒後適合 ④事後預防性服NTG ⑤熟悉環境伴侶 ⑥室溫勿太冷熱",options:["①②③", "①④⑥", "②⑤⑥", "③④⑤"],answer:2,explanation:"②⑤⑥正確。不需完全避免①。飽餐酒後不適合③。不需預防性服NTG④。",reference:"心肌梗塞 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%BF%83%E8%82%8C%E6%A2%97%E5%A1%9E"},
+{id:"113-1-18",examId:"113-1",num:18,category:"心血管",question:"冠心病服用Aspirin主要目的？",options:["緩解胸痛", "鬆弛血管平滑肌", "抑制血小板凝集", "減緩心跳速率"],answer:2,explanation:"Aspirin低劑量時主要作用為抑制血小板凝集，預防血栓形成。",reference:"阿斯匹靈 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%98%BF%E6%96%AF%E5%8C%B9%E9%9D%88"},
+{id:"113-1-19",examId:"113-1",num:19,category:"心血管",question:"心臟節律器何者正確？",options:["持續打嗝是正常現象", "永久性激搏器在體外", "暫時性節律器不會出現pace spike", "永久性節律器4-6週內避免提重物"],answer:3,explanation:"裝設永久性節律器後4-6週內應避免同側手臂過度活動及提重物，以利傷口癒合和電極穩固。",reference:"傷口癒合 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%82%B7%E5%8F%A3%E6%84%88%E5%90%88"},
+{id:"113-1-20",examId:"113-1",num:20,category:"心血管",question:"DVT服用Warfarin護理指導？",options:["監測APTT", "可自行停藥", "避免大量深綠色蔬菜", "建議補充VitK"],answer:2,explanation:"Warfarin監測PT/INR(非APTT)。不可自行停藥。避免大量VitK食物(深綠色蔬菜)。不需補充VitK。",reference:"深靜脈血栓 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%B7%B1%E9%9D%9C%E8%84%88%E8%A1%80%E6%A0%93"},
+{id:"113-1-21",examId:"113-1",num:21,category:"腫瘤",question:"trastuzumab(Herceptin)護理？①靜脈滴注 ②空腹口服 ③監測丘疹手足症候群 ④監測心臟功能",options:["①③", "①④", "②③", "②④"],answer:1,explanation:"Herceptin為靜脈滴注①，主要副作用為心臟毒性需監測心臟功能④。",reference:"曲妥珠單抗 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%9B%B2%E5%A6%A5%E7%8F%A0%E5%96%AE%E6%8A%97"},
+{id:"113-1-22",examId:"113-1",num:22,category:"腫瘤",question:"癌細胞轉移何者錯誤？",options:["轉移是擴散至其他組織", "惡性肉瘤常以淋巴轉移", "常見淋巴血流體腔播種", "肺肝骨骼為常見轉移部位"],answer:1,explanation:"惡性肉瘤(sarcoma)主要以「血流」轉移，癌(carcinoma)才以淋巴轉移為主。",reference:"癌症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%99%8C%E7%97%87"},
+{id:"113-1-23",examId:"113-1",num:23,category:"血液",question:"何杰金氏症何者不是常見症狀？",options:["淋巴腫大無壓痛", "皮膚搔癢", "腸胃嘔吐排便改變", "呼吸困難咳嗽咳血胸悶"],answer:2,explanation:"腸胃系統嘔吐、排便習慣改變不是何杰金氏病的常見症狀。",reference:"淋巴瘤 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%B7%8B%E5%B7%B4%E7%98%A4"},
+{id:"113-1-24",examId:"113-1",num:24,category:"腫瘤",question:"doxorubicin外滲處置何者不適當？",options:["可能為熱反應給NS及dexamethasone", "懷疑外滲停止注射以原針回抽", "墊高注射部位局部避免加壓", "藥物外滲可給溫熱敷"],answer:3,explanation:"doxorubicin為起疱劑，外滲時應給「冰敷」(非溫熱敷)以減少組織損傷。",reference:"乳癌 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E4%B9%B3%E7%99%8C"},
+{id:"113-1-25",examId:"113-1",num:25,category:"血液",question:"供髓者王小明50公斤護理措施？",options:["骨髓抽取半身麻醉", "抽取量約100cc", "抽取後不需平躺", "過濾後可立即輸注受髓者"],answer:3,explanation:"骨髓過濾後可立即輸注至受髓者。抽取量約10-15mL/kg(500-750cc)。需全身麻醉。術後需平躺。",reference:"骨髓移植 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%AA%A8%E9%AB%93%E7%A7%BB%E6%A4%8D"},
+{id:"113-1-26",examId:"113-1",num:26,category:"血液",question:"紅血球增多症護理何者錯誤？",options:["深呼吸有效咳嗽", "儘量臥床避免出血", "增加飲水至少3000-4000mL", "評估跌倒危險因子"],answer:1,explanation:"紅血球增多症應鼓勵適度活動(非臥床)以促進循環，避免血栓。",reference:"紅血球增多症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%B4%85%E8%A1%80%E7%90%83%E5%A2%9E%E5%A4%9A%E7%97%87"},
+{id:"113-1-27",examId:"113-1",num:27,category:"皮膚",question:"蜂窩性組織炎護理？",options:["靜脈輸液全身性抗生素7-10天", "內科無菌冷水浸泡", "減少攝取液體避免水腫", "患肢低於胸部降低病菌回流"],answer:0,explanation:"蜂窩性組織炎需靜脈抗生素治療，患肢應抬高(非放低)以促進靜脈回流減輕水腫。",reference:"蜂窩性組織炎 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%9C%82%E7%AA%A9%E7%B5%84%E7%B9%94%E7%82%8E"},
+{id:"113-1-28",examId:"113-1",num:28,category:"皮膚",question:"四度熱燒傷何者較不常發生？",options:["體溫過低", "體液容積缺失", "急性疼痛", "潛在危險性感染"],answer:2,explanation:"四度燒傷傷及全層皮膚至肌肉骨骼，神經末梢已被破壞，「疼痛感反而不明顯」。",reference:"燒傷 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%87%92%E5%82%B7"},
+{id:"113-1-29",examId:"113-1",num:29,category:"皮膚",question:"疥瘡治療？",options:["白天使用抗疥蟲藥", "crotamiton塗全身含頭臉", "BB塗抹待乾後再塗一次24hr沖掉", "Lindane塗抹8-12hr沖掉每天使用一次"],answer:2,explanation:"BB(Benzyl Benzoate)正確使用方式：塗抹待乾後再塗一次，24小時後沖掉。成人crotamiton不用塗頭臉(B錯)。Lindane不可每天用(D錯)。",reference:"疥瘡 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%96%A5%E7%98%A1"},
+{id:"113-1-30",examId:"113-1",num:30,category:"免疫",question:"鞏皮症臨床表徵何者錯誤？",options:["上腹飽脹灼痛", "雷諾氏現象", "面部表情缺失", "後續發展成肝衰竭"],answer:3,explanation:"鞏皮症通常不會發展成肝衰竭。主要影響皮膚、食道、肺、心、腎。",reference:"硬皮症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%A1%AC%E7%9A%AE%E7%97%87"},
+{id:"113-1-31",examId:"113-1",num:31,category:"免疫",question:"SLE臨床表徵何者錯誤？",options:["蝴蝶斑為典型", "肺部以肺炎最常見", "可能蛋白尿血尿", "出現人格改變精神疾病"],answer:1,explanation:"SLE肺部受侵犯以「肋膜炎」最常見(非肺炎)。",reference:"全身性紅斑性狼瘡 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%B4%85%E6%96%91%E6%80%A7%E7%8B%BC%E7%98%A1"},
+{id:"113-1-32",examId:"113-1",num:32,category:"呼吸",question:"持續換氣不足的ABG結果？",options:["呼吸性酸中毒", "呼吸性鹼中毒", "代謝性酸中毒", "代謝性鹼中毒"],answer:0,explanation:"持續換氣不足→CO2滯留→PaCO2升高→呼吸性酸中毒。",reference:"動脈血氣分析 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%8B%95%E8%84%88%E8%A1%80%E6%B0%A3%E5%88%86%E6%9E%90"},
+{id:"113-1-33",examId:"113-1",num:33,category:"呼吸",question:"氣喘病人用藥後心悸心律不整，可能藥物？",options:["fenoterol(Berotec)", "ipratropium bromide", "budesonide", "montelukast"],answer:0,explanation:"fenoterol為β2促效劑(支氣管擴張劑)，副作用包括心悸、心律不整、手抖等。",reference:"氣喘 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%93%AE%E5%96%98"},
+{id:"113-1-34",examId:"113-1",num:34,category:"呼吸",question:"左側肋膜積水胸腔穿刺術最適當姿勢？",options:["床頭搖高30度仰臥", "坐於床緣頭手趴在床旁桌上", "躺向左側左手上舉", "左手上舉採俯臥"],answer:1,explanation:"胸腔穿刺標準姿勢為坐在床緣，上半身前傾趴在床旁桌上。",reference:"胸腔穿刺術 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%83%B8%E8%85%94%E7%A9%BF%E5%88%BA%E8%A1%93"},
+{id:"113-1-35",examId:"113-1",num:35,category:"呼吸",question:"肺炎鏈球菌肺炎臨床表徵何者最不適當？",options:["痰液量增加", "胸部X光肺浸潤", "白血球上升", "呼吸離軌度增加"],answer:3,explanation:"呼吸「離軌度」不是肺炎的典型表徵或常用評估術語。但答案D。",reference:"肺炎 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%82%BA%E7%82%8E"},
+{id:"113-1-36",examId:"113-1",num:36,category:"呼吸",question:"COPD飲食指導？①進食時氧氣面罩換套管 ②易咀嚼食物 ③增加碳水化合物 ④減少水分",options:["①②", "①③", "②④", "③④"],answer:0,explanation:"①②正確。進食時換套管方便進食①。選擇易咀嚼食物②。應減少碳水化合物(產CO2多)非增加③。不應限水④。",reference:"COPD - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%85%A2%E6%80%A7%E9%98%BB%E5%A1%9E%E6%80%A7%E8%82%BA%E7%97%85"},
+{id:"113-1-37",examId:"113-1",num:37,category:"泌尿",question:"腎臟移植何者錯誤？",options:["術前再進行血透", "交叉試驗陰性才可移植", "移植腎植入下腹部腸骨窩", "必須先移除原腎臟再接合"],answer:3,explanation:"腎臟移植通常不需要移除原來的腎臟，新腎植入腸骨窩，原腎留在原位。",reference:"器官移植 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%99%A8%E5%AE%98%E7%A7%BB%E6%A4%8D"},
+{id:"113-1-38",examId:"113-1",num:38,category:"泌尿",question:"何項檢查前需確認腎功能？①腎動脈攝影 ②KUB ③腎臟超音波 ④逆行性腎盂攝影 ⑤IVP",options:["①②", "①⑤", "②③", "④⑤"],answer:1,explanation:"腎動脈攝影①和IVP⑤使用含碘顯影劑，可能損傷腎功能，需先確認。KUB和超音波不需顯影劑。",reference:"慢性腎臟病 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%85%A2%E6%80%A7%E8%85%8E%E8%87%9F%E7%97%85"},
+{id:"113-1-39",examId:"113-1",num:39,category:"泌尿",question:"透析治療比較？",options:["血透飲食限制較腹透嚴格", "血透蛋白質流失較腹透多", "血透高血脂比例較腹透高", "血透心血管負荷較腹透少"],answer:0,explanation:"血液透析的飲食限制(鉀磷水分鈉)比腹膜透析嚴格。腹膜透析蛋白質流失較多。腹膜透析高血脂較多。血透心血管負荷較大。",reference:"慢性腎臟病 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%85%A2%E6%80%A7%E8%85%8E%E8%87%9F%E7%97%85"},
+{id:"113-1-40",examId:"113-1",num:40,category:"呼吸",question:"pH 7.44 PaCO2 30 HCO3 20 PaO2 82判讀？",options:["部分代償呼吸性酸中毒", "未代償代謝性酸中毒", "未代償代謝性鹼中毒", "完全代償呼吸性鹼中毒"],answer:3,explanation:"pH在正常範圍偏鹼。PaCO2 30偏低(呼吸性鹼中毒)。HCO3 20偏低(代謝代償)。pH回到正常→完全代償呼吸性鹼中毒。",reference:"動脈血氣分析 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%8B%95%E8%84%88%E8%A1%80%E6%B0%A3%E5%88%86%E6%9E%90"},
+{id:"113-1-41",examId:"113-1",num:41,category:"泌尿",question:"良性前列腺肥大何者錯誤？",options:["是細胞本身肥大所致", "尿流速會減低", "常主訴頻尿餘尿感", "肛門觸診可評估"],answer:0,explanation:"前列腺肥大是細胞「增生」(hyperplasia)而非「肥大」(hypertrophy)。A敘述錯誤。",reference:"泌尿系統 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%B3%8C%E5%B0%BF%E7%B3%BB%E7%B5%B1"},
+{id:"113-1-42",examId:"113-1",num:42,category:"內分泌",question:"原發性醛固酮過多症護理何者錯誤？",options:["觀察肌肉無力疲倦心律不整", "觀察強直性痙攣呼吸抑制", "教導多補充高鈉食物", "注意血壓過高"],answer:2,explanation:"醛固酮過多已導致鈉滯留高血壓，應限制鈉攝取(非多補充高鈉食物)。",reference:"高血壓 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%AB%98%E8%A1%80%E5%A3%93"},
+{id:"113-1-43",examId:"113-1",num:43,category:"內分泌",question:"SIADH臨床照護何者錯誤？",options:["補充3%NS及Lasix", "鼓勵多攝取低纖食物", "監測肌肉抽搐昏迷", "限制水分<1000cc/日"],answer:1,explanation:"SIADH應採高纖維飲食預防便秘(非低纖)。主要治療為限水。",reference:"尿崩症 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E5%B0%BF%E5%B4%A9%E7%97%87"},
+{id:"113-1-44",examId:"113-1",num:44,category:"內分泌",question:"metformin(Glucophage)何者錯誤？",options:["減少肝臟葡萄糖輸出", "最好與食物一起服用", "易出現GI刺激及VitB6缺乏", "腎功能不良需小心"],answer:2,explanation:"Metformin可能引起VitB12缺乏(非VitB6)。C敘述錯誤。",reference:"慢性腎臟病 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E6%85%A2%E6%80%A7%E8%85%8E%E8%87%9F%E7%97%85"},
+{id:"113-1-45",examId:"113-1",num:45,category:"內分泌",question:"HHS病人徵象？①呼吸速率26 ②血壓166/84 ③尿酮明顯升高 ④血糖750",options:["①②", "①④", "②③", "③④"],answer:1,explanation:"HHS特徵：嚴重高血糖④(>600)、高血壓(脫水可能低血壓但也可能高②)。HHS通常尿酮不明顯(非明顯升高③)。呼吸不會像DKA那樣Kussmaul呼吸。但答案B(①④)。",reference:"糖尿病 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%B3%96%E5%B0%BF%E7%97%85"},
+{id:"113-1-46",examId:"113-1",num:46,category:"內分泌",question:"甲狀腺機能亢進服用飽和碘化鉀溶液？",options:["絕不可與牛奶一起服用", "主要功能抑制T4轉為T3", "可降低甲狀腺素釋放及合成", "要長期服用超過一個月"],answer:2,explanation:"飽和碘化鉀溶液可降低甲狀腺素的釋放及合成(Wolff-Chaikoff效應)。可與牛奶或果汁服用。效果短暫不宜長期使用。",reference:"甲狀腺功能亢進 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E7%94%B2%E7%8A%B6%E8%85%BA%E5%8A%9F%E8%83%BD%E4%BA%A2%E8%BF%9B%E7%97%87"},
+{id:"113-1-47",examId:"113-1",num:47,category:"急重症",question:"休克病人體溫下降護理？",options:["身體顫抖時調低室溫", "靜脈液體或血液加溫至正常體溫", "用熱水袋或電毯包裹四肢", "給予熱水浴"],answer:1,explanation:"靜脈輸液或血液應加溫至接近正常體溫(37℃)，避免輸注冷液體加重低溫。不可用電毯或熱水袋(末梢血管擴張加重休克)。",reference:"休克 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E4%BC%91%E5%85%8B"},
+{id:"113-1-48",examId:"113-1",num:48,category:"傳染病",question:"食物中毒？",options:["河豚中毒因細菌污染", "金黃色葡萄球菌致視力模糊", "沙門氏桿菌致腹瀉噁心嘔吐發燒", "嚴重度與污染量呈負相關"],answer:2,explanation:"沙門氏桿菌中毒典型症狀為腹瀉、噁心、嘔吐及發燒。河豚含河豚毒素非細菌。金葡萄致嘔吐腹瀉。嚴重度呈正相關。",reference:"食物中毒 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%A3%9F%E7%89%A9%E4%B8%AD%E6%AF%92"},
+{id:"113-1-49",examId:"113-1",num:49,category:"急重症",question:"AED操作何者錯誤？",options:["可由非醫護人員操作", "體內有節律器不能使用", "步驟口訣開貼插按", "電擊前確認無人接觸病人"],answer:1,explanation:"體內有心臟節律器者仍可使用AED，但電擊板應避開節律器位置(距離至少8cm)。",reference:"AED - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E8%87%AA%E5%8B%95%E9%AB%94%E5%A4%96%E5%BF%83%E8%87%9F%E9%99%A4%E9%A1%AB%E5%99%A8"},
+{id:"113-1-50",examId:"113-1",num:50,category:"傳染病",question:"漢生病照護？",options:["最常侵犯腸胃系統", "照護時採接觸及呼吸道隔離", "目前無治療藥物", "皮膚病變僅出現在臉部"],answer:1,explanation:"漢生病(麻瘋)照護採接觸及呼吸道隔離。主要侵犯皮膚及周邊神經(非腸胃)。有治療藥物(Dapsone等)。皮膚病變可出現全身。",reference:"漢生病 - 維基百科",refUrl:"https://zh.wikipedia.org/zh-tw/%E9%BA%BB%E9%A2%A8%E7%97%85"},
+];
+
+</script>
+
+<script type="text/babel">
+const {useState, useEffect, useRef} = React;
+const OPT = ["A","B","C","D"];
+
+const LS = {
+  load(k,fb){try{const r=localStorage.getItem(k);return r?JSON.parse(r):fb}catch{return fb}},
+  save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{}},
+  clearAll(){try{localStorage.removeItem("exam-wrong");localStorage.removeItem("exam-star");localStorage.removeItem("exam-stats")}catch{}}
+};
+
+function App() {
+  const [view, setView] = useState("home");
+  const [examFilter, setExamFilter] = useState("all");
+  const [wrongIds, setWrongIds] = useState(()=>LS.load("exam-wrong",[]));
+  const [starIds, setStarIds] = useState(()=>LS.load("exam-star",[]));
+  const [stats, setStats] = useState(()=>LS.load("exam-stats",{total:0,correct:0,sessions:0}));
+  const [showReset, setShowReset] = useState(false);
+
+  useEffect(()=>LS.save("exam-wrong",wrongIds),[wrongIds]);
+  useEffect(()=>LS.save("exam-star",starIds),[starIds]);
+  useEffect(()=>LS.save("exam-stats",stats),[stats]);
+
+  const toggleStar = id => setStarIds(p => p.includes(id)?p.filter(x=>x!==id):[...p,id]);
+  const addWrong = id => setWrongIds(p => p.includes(id)?p:[...p,id]);
+  const rmWrong = id => setWrongIds(p => p.filter(x=>x!==id));
+  const record = (t,c) => setStats(p=>({total:p.total+t,correct:p.correct+c,sessions:p.sessions+1}));
+
+  const clearAllData = () => {
+    setWrongIds([]);setStarIds([]);setStats({total:0,correct:0,sessions:0});
+    LS.clearAll();setShowReset(false);setView("home");
+  };
+
+  const filteredQs = examFilter==="all" ? QUESTIONS : QUESTIONS.filter(q=>q.examId===examFilter);
+  const props = {questions:filteredQs,allQuestions:QUESTIONS,wrongIds,starIds,toggleStar,addWrong,rmWrong,record,
+    goHome:()=>setView("home"),examFilter,setExamFilter};
+
+  return (
+    <div style={{fontFamily:"'Noto Sans TC',sans-serif",maxWidth:560,margin:"0 auto",minHeight:"100vh",background:"#f8f6f3",color:"#2a2520",paddingBottom:40}}>
+      {showReset && <div className="modal-overlay" onClick={()=>setShowReset(false)}>
+        <div className="modal-box" onClick={e=>e.stopPropagation()}>
+          <p className="modal-title">⚠️ 確定要清除所有資料？</p>
+          <p className="modal-msg">這將會清除你的錯題紀錄、重要標記、以及所有練習統計數據，此操作無法復原。</p>
+          <div className="modal-btns">
+            <button className="modal-cancel" onClick={()=>setShowReset(false)}>取消</button>
+            <button className="modal-confirm" onClick={clearAllData}>確定清除</button>
+          </div>
+        </div>
+      </div>}
+      {view==="home"&&<Home {...props} setView={setView} stats={stats} onReset={()=>setShowReset(true)}/>}
+      {view==="practice"&&<Practice {...props}/>}
+      {view==="exam"&&<Exam {...props}/>}
+      {view==="review"&&<Review {...props}/>}
+      {view==="starred"&&<StarredView {...props}/>}
+    </div>
+  );
+}
+
+function Home({setView,stats,wrongIds,starIds,allQuestions,examFilter,setExamFilter,onReset}){
+  const rate=stats.total>0?Math.round(stats.correct/stats.total*100):0;
+  const modes=[
+    {k:"practice",icon:"📖",t:"一般練習",d:"逐題作答・即時詳解",c:"#1a5632",bg:"linear-gradient(145deg,#e8f5e9,#c8e6c9)"},
+    {k:"exam",icon:"⏱️",t:"計時考試",d:"模擬正式考試",c:"#b45309",bg:"linear-gradient(145deg,#fff3e0,#ffe0b2)"},
+    {k:"review",icon:"🔄",t:"錯題複習",d:`${wrongIds.length} 題待複習`,c:"#7b1fa2",bg:"linear-gradient(145deg,#f3e5f5,#e1bee7)"},
+    {k:"starred",icon:"⭐",t:"重要標記",d:`${starIds.length} 題已標記`,c:"#c77c00",bg:"linear-gradient(145deg,#fffde7,#fff9c4)"},
+  ];
+  return(
+    <div>
+      <div className="hero"><div className="hero-bg"/>
+        <h1 className="hero-title">內外科護理學</h1>
+        <p className="hero-sub">護理師考試 · 考古題特訓</p>
+        <p className="hero-count">{allQuestions.length} 題收錄 · {EXAMS.length} 回歷屆考題</p>
+      </div>
+      {stats.total>0&&<div className="stats-row">
+        <div className="stat"><b>{stats.total}</b><span>已作答</span></div>
+        <div className="stat hl"><b>{rate}%</b><span>正確率</span></div>
+        <div className="stat"><b>{stats.sessions}</b><span>練習次</span></div>
+      </div>}
+      <div style={{padding:"16px 16px 0"}}>
+        <label className="filter-label">選擇考試回次</label>
+        <select className="filter-select" value={examFilter} onChange={e=>setExamFilter(e.target.value)}>
+          <option value="all">全部 ({allQuestions.length} 題)</option>
+          {EXAMS.map(ex=>{
+            const cnt=allQuestions.filter(q=>q.examId===ex.id).length;
+            return <option key={ex.id} value={ex.id}>{ex.name} ({cnt} 題)</option>;
+          })}
+        </select>
+      </div>
+      <div className="mode-grid">
+        {modes.map((m,i)=>(
+          <button key={m.k} className="mode-card" style={{background:m.bg,animationDelay:`${i*.07}s`}} onClick={()=>setView(m.k)}>
+            <span style={{fontSize:34}}>{m.icon}</span>
+            <span className="mode-title" style={{color:m.c}}>{m.t}</span>
+            <span className="mode-desc">{m.d}</span>
+          </button>
+        ))}
+      </div>
+      <div style={{textAlign:"center",marginTop:24}}>
+        <button className="reset-btn" onClick={onReset}>🗑️ 清除所有學習記錄</button>
+      </div>
+    </div>
+  );
+}
+
+function Practice({questions:qs,starIds,toggleStar,addWrong,rmWrong,goHome}){
+  const [i,setI]=useState(0);const [sel,setSel]=useState(null);const [show,setShow]=useState(false);
+  if(!qs.length) return <Empty title="📖 一般練習" back={goHome}/>;
+  const q=qs[Math.min(i,qs.length-1)];
+  const pick=o=>{if(sel!==null)return;setSel(o);setShow(true);o!==q.answer?addWrong(q.id):rmWrong(q.id);};
+  const go=d=>{setSel(null);setShow(false);setI(p=>Math.max(0,Math.min(qs.length-1,p+d)));};
+  return(<div>
+    <Hdr title="📖 一般練習" back={goHome}/>
+    <Bar cur={i+1} tot={qs.length} color="#1a5632"/>
+    <QCard q={q} i={i} tot={qs.length} sel={sel} show={show} star={starIds.includes(q.id)} onSel={pick} onStar={()=>toggleStar(q.id)}/>
+    <NavR i={i} tot={qs.length} go={go}/>
+  </div>);
+}
+
+function Exam({questions:qs,starIds,toggleStar,addWrong,rmWrong,record,goHome}){
+  const [phase,setPhase]=useState("setup");const [tl,setTl]=useState(10);
+  const [left,setLeft]=useState(0);const [i,setI]=useState(0);const [ans,setAns]=useState({});
+  const ref=useRef(null);
+  const start=()=>{setPhase("run");setLeft(tl*60);setI(0);setAns({});};
+  useEffect(()=>{
+    if(phase!=="run")return;
+    ref.current=setInterval(()=>setLeft(t=>{if(t<=1){clearInterval(ref.current);setPhase("done");return 0;}return t-1;}),1000);
+    return()=>clearInterval(ref.current);
+  },[phase]);
+  const submit=()=>{clearInterval(ref.current);qs.forEach(q=>ans[q.id]===q.answer?rmWrong(q.id):addWrong(q.id));record(qs.length,qs.filter(q=>ans[q.id]===q.answer).length);setPhase("done");};
+  const mm=String(Math.floor(left/60)).padStart(2,"0"),ss=String(left%60).padStart(2,"0");
+  if(!qs.length) return <Empty title="⏱️ 計時考試" back={goHome}/>;
+  if(phase==="setup") return(<div>
+    <Hdr title="⏱️ 計時考試" back={goHome}/>
+    <div className="setup-card">
+      <p className="setup-label">選擇考試時間（分鐘）</p>
+      <div className="time-row">{[5,10,15,20,30].map(t=><button key={t} className={`time-btn ${tl===t?"active":""}`} onClick={()=>setTl(t)}>{t}</button>)}</div>
+      <p className="setup-info">共 {qs.length} 題 · {tl} 分鐘</p>
+      <button className="big-btn" onClick={start}>開始考試</button>
+    </div>
+  </div>);
+  if(phase==="done"){
+    const c=qs.filter(q=>ans[q.id]===q.answer).length;
+    return(<div>
+      <Hdr title="📊 考試結果" back={goHome}/>
+      <div className="result-card">
+        <div className="score-big">{Math.round(c/qs.length*100)}<span>%</span></div>
+        <p className="score-sub">答對 {c} / {qs.length} 題</p>
+        <div className="dot-grid">{qs.map((q,j)=><div key={q.id} className={`dot ${ans[q.id]===q.answer?"ok":"no"}`}>{j+1}</div>)}</div>
+        <button className="big-btn" style={{marginTop:20}} onClick={goHome}>返回首頁</button>
+      </div>
+      <div>{qs.map((q,j)=><QCard key={q.id} q={q} i={j} tot={qs.length} sel={ans[q.id]!=null?ans[q.id]:null} show={true} star={starIds.includes(q.id)} onSel={()=>{}} onStar={()=>toggleStar(q.id)} rev={true}/>)}</div>
+    </div>);
+  }
+  const q=qs[i];
+  return(<div>
+    <div className="exam-hdr"><button className="back-btn" onClick={goHome}>✕</button><div className={`timer ${left<60?"warn":""}`}>🕐 {mm}:{ss}</div><button className="submit-btn" onClick={submit}>交卷</button></div>
+    <Bar cur={Object.keys(ans).length} tot={qs.length} color="#b45309"/>
+    <QCard q={q} i={i} tot={qs.length} sel={ans[q.id]!=null?ans[q.id]:null} show={false} star={starIds.includes(q.id)} onSel={o=>setAns(p=>({...p,[q.id]:o}))} onStar={()=>toggleStar(q.id)} exam={true}/>
+    <NavR i={i} tot={qs.length} go={d=>setI(p=>Math.max(0,Math.min(qs.length-1,p+d)))}/>
+    <div className="jump-row">{qs.map((qq,j)=><button key={qq.id} className={`jump ${ans[qq.id]!=null?"done":""} ${j===i?"cur":""}`} onClick={()=>setI(j)}>{j+1}</button>)}</div>
+  </div>);
+}
+
+function Review({allQuestions,wrongIds,starIds,toggleStar,rmWrong,goHome}){
+  const qs=allQuestions.filter(q=>wrongIds.includes(q.id));
+  const [i,setI]=useState(0);const [sel,setSel]=useState(null);const [show,setShow]=useState(false);
+  if(!qs.length) return(<div><Hdr title="🔄 錯題複習" back={goHome}/><div className="empty-card"><span style={{fontSize:52}}>🎉</span><p className="empty-t">沒有錯題，太棒了！</p><button className="big-btn" style={{marginTop:20}} onClick={goHome}>返回首頁</button></div></div>);
+  const idx=Math.min(i,qs.length-1);const q=qs[idx];
+  const pick=o=>{if(sel!==null)return;setSel(o);setShow(true);if(o===q.answer)rmWrong(q.id);};
+  const go=d=>{setSel(null);setShow(false);setI(p=>Math.max(0,Math.min(qs.length-1,p+d)));};
+  return(<div><Hdr title="🔄 錯題複習" back={goHome}/><Bar cur={idx+1} tot={qs.length} color="#7b1fa2"/>
+    <QCard q={q} i={idx} tot={qs.length} sel={sel} show={show} star={starIds.includes(q.id)} onSel={pick} onStar={()=>toggleStar(q.id)}/>
+    <NavR i={idx} tot={qs.length} go={go}/></div>);
+}
+
+function StarredView({allQuestions,starIds,toggleStar,addWrong,rmWrong,goHome}){
+  const qs=allQuestions.filter(q=>starIds.includes(q.id));
+  const [i,setI]=useState(0);const [sel,setSel]=useState(null);const [show,setShow]=useState(false);
+  if(!qs.length) return(<div><Hdr title="⭐ 重要標記" back={goHome}/><div className="empty-card"><span style={{fontSize:52}}>📌</span><p className="empty-t">尚未標記任何題目</p><p style={{color:"#aaa",fontSize:13,marginTop:4}}>作答時按星號即可標記</p><button className="big-btn" style={{marginTop:20}} onClick={goHome}>返回首頁</button></div></div>);
+  const idx=Math.min(i,qs.length-1);const q=qs[idx];
+  const pick=o=>{if(sel!==null)return;setSel(o);setShow(true);o!==q.answer?addWrong(q.id):rmWrong(q.id);};
+  const go=d=>{setSel(null);setShow(false);setI(p=>Math.max(0,Math.min(qs.length-1,p+d)));};
+  return(<div><Hdr title="⭐ 重要標記" back={goHome}/><Bar cur={idx+1} tot={qs.length} color="#c77c00"/>
+    <QCard q={q} i={idx} tot={qs.length} sel={sel} show={show} star={true} onSel={pick} onStar={()=>toggleStar(q.id)}/>
+    <NavR i={idx} tot={qs.length} go={go}/></div>);
+}
+
+function Empty({title,back}){return <div><Hdr title={title} back={back}/><div className="empty-card"><span style={{fontSize:52}}>📭</span><p className="empty-t">此分類目前沒有題目</p><button className="big-btn" style={{marginTop:20}} onClick={back}>返回首頁</button></div></div>;}
+function Hdr({title,back}){return <div className="hdr"><button className="back-btn" onClick={back}>← 返回</button><span className="hdr-t">{title}</span><div style={{width:60}}/></div>;}
+function Bar({cur,tot,color}){return <div className="bar-outer"><div className="bar-inner" style={{width:`${cur/tot*100}%`,background:color}}/></div>;}
+function NavR({i,tot,go}){return <div className="nav-row"><button className="nav-btn" disabled={i===0} onClick={()=>go(-1)}>◀ 上一題</button><span className="nav-ct">{i+1}/{tot}</span><button className="nav-btn" disabled={i===tot-1} onClick={()=>go(1)}>下一題 ▶</button></div>;}
+
+function QCard({q,i,tot,sel,show,star,onSel,onStar,exam,rev}){
+  const done=sel!==null;
+  return(<div className="card fadeUp">
+    <div className="card-top">
+      <div style={{display:"flex",gap:6,alignItems:"center"}}>
+        <span className="cat">{q.category}</span>
+        <span className="exam-tag">{q.examId}</span>
+      </div>
+      <button className={`star-btn ${star?"on":""}`} onClick={onStar}>{star?"★":"☆"}</button>
+    </div>
+    <p className="q-text"><b className="q-num">Q{q.num}.</b> {q.question}</p>
+    <div className="opts">{q.options.map((o,j)=>{
+      let cls="opt";
+      if(done&&!exam){if(j===q.answer)cls+=" correct";else if(j===sel&&j!==q.answer)cls+=" wrong";}
+      if(rev){if(j===q.answer)cls+=" correct";else if(j===sel&&j!==q.answer)cls+=" wrong";}
+      if(exam&&sel===j)cls+=" picked";
+      return(<button key={j} className={cls} onClick={()=>onSel(j)} disabled={done&&!exam}>
+        <span className="opt-label">{OPT[j]}</span><span className="opt-text">{o}</span>
+        {done&&!exam&&j===q.answer&&<span className="mark ok-mark">✓</span>}
+        {done&&!exam&&j===sel&&j!==q.answer&&<span className="mark no-mark">✗</span>}
+      </button>);
+    })}</div>
+    {(show||rev)&&<div className="explain fadeIn">
+      {show&&!rev&&<div className="explain-status">{sel===q.answer?<span className="status-ok">✅ 答對了！</span>:<span className="status-no">❌ 答錯了 — 正確答案：{OPT[q.answer]}</span>}</div>}
+      <p className="explain-text">{q.explanation}</p>
+      {q.reference&&<div className="ref-row"><span>📚</span>{q.refUrl?<a href={q.refUrl} target="_blank" rel="noreferrer" className="ref-link">{q.reference}</a>:<span className="ref-link">{q.reference}</span>}</div>}
+    </div>}
+  </div>);
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
